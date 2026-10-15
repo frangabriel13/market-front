@@ -71,7 +71,10 @@ export function ListaEditable({
         <Input
           id={id}
           value={nuevo}
-          onChange={(e) => setNuevo(e.target.value)}
+          onChange={(e) => {
+            setNuevo(e.target.value);
+            setAviso(undefined);
+          }}
           onKeyDown={alApretarTecla}
           placeholder={placeholder}
           maxLength={maxLength}
