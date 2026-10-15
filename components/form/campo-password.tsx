@@ -1,7 +1,7 @@
 "use client";
 
 import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Controller, type Control, type FieldValues, type Path } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
@@ -20,6 +20,7 @@ export function CampoPassword<T extends FieldValues, TOut extends FieldValues>({
   label,
   autoComplete,
 }: Props<T, TOut>) {
+  const id = useId();
   const [visible, setVisible] = useState(false);
   return (
     <Controller
@@ -27,11 +28,11 @@ export function CampoPassword<T extends FieldValues, TOut extends FieldValues>({
       name={name}
       render={({ field, fieldState }) => (
         <Field data-invalid={fieldState.invalid}>
-          <FieldLabel htmlFor={name}>{label}</FieldLabel>
+          <FieldLabel htmlFor={id}>{label}</FieldLabel>
           <div className="relative">
             <Input
               {...field}
-              id={name}
+              id={id}
               type={visible ? "text" : "password"}
               autoComplete={autoComplete}
               aria-invalid={fieldState.invalid}

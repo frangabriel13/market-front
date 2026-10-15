@@ -1,6 +1,6 @@
 "use client";
 
-import type { ComponentProps, ReactNode } from "react";
+import { useId, type ComponentProps, type ReactNode } from "react";
 import { Controller, type Control, type FieldValues, type Path } from "react-hook-form";
 import {
   Field,
@@ -27,6 +27,7 @@ export function CampoTexto<T extends FieldValues, TOut extends FieldValues>({
   multilinea,
   ...inputProps
 }: Props<T, TOut>) {
+  const id = useId();
   return (
     <Controller
       control={control}
@@ -34,13 +35,13 @@ export function CampoTexto<T extends FieldValues, TOut extends FieldValues>({
       render={({ field, fieldState }) => {
         const props = {
           ...field,
-          id: name,
+          id,
           value: (field.value as string | null | undefined) ?? "",
           "aria-invalid": fieldState.invalid,
         };
         return (
           <Field data-invalid={fieldState.invalid}>
-            <FieldLabel htmlFor={name}>{label}</FieldLabel>
+            <FieldLabel htmlFor={id}>{label}</FieldLabel>
             {multilinea ? (
               <Textarea {...props} maxLength={inputProps.maxLength} rows={5} />
             ) : (
