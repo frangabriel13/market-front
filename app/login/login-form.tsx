@@ -1,23 +1,26 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff } from "lucide-react";
+import Link from "next/link";
 import { unstable_rethrow } from "next/navigation";
-import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useLayoutEffect } from "react";
+import { useForm } from "react-hook-form";
+import { CampoPassword } from "@/components/form/campo-password";
+import { CampoTexto } from "@/components/form/campo-texto";
+import { ErrorFormulario } from "@/components/form/error-formulario";
 import { Button } from "@/components/ui/button";
-import { Field, FieldError, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import { loginSchema, type Login, type LoginInput } from "@/lib/schemas/auth";
 import { iniciarSesion } from "./acciones";
 
 export function LoginForm() {
-  const [verPassword, setVerPassword] = useState(false);
   const form = useForm<LoginInput, unknown, Login>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
   });
   const { errors, isSubmitting } = form.formState;
+
+  // Next deja la página oculta al navegar: que no quede la contraseña.
+  useLayoutEffect(() => () => form.reset(), [form]);
 
   // Si el login sale bien, la acción redirige y no vuelve.
   async function onSubmit(datos: Login) {
@@ -36,75 +39,37 @@ export function LoginForm() {
   return (
     <form
       noValidate
-      onSubmit={form.handleSubmit(onSubmit)}
+      onSubmit={(evento) => form.handleSubmit(onSubmit)(evento)}
       className="flex flex-col gap-5"
     >
-      <Controller
+      <CampoTexto
+        control={form.control}
         name="email"
-        control={form.control}
-        render={({ field, fieldState }) => (
-          <Field data-invalid={fieldState.invalid}>
-            <FieldLabel htmlFor="email">Email</FieldLabel>
-            <Input
-              {...field}
-              id="email"
-              type="email"
-              inputMode="email"
-              autoComplete="email"
-              autoCapitalize="none"
-              spellCheck={false}
-              aria-invalid={fieldState.invalid}
-            />
-            <FieldError errors={[fieldState.error]} />
-          </Field>
-        )}
+        label="Email"
+        type="email"
+        inputMode="email"
+        autoComplete="email"
+        autoCapitalize="none"
+        spellCheck={false}
       />
-
-      <Controller
+      <CampoPassword
+        control={form.control}
         name="password"
-        control={form.control}
-        render={({ field, fieldState }) => (
-          <Field data-invalid={fieldState.invalid}>
-            <FieldLabel htmlFor="password">Contraseña</FieldLabel>
-            <div className="relative">
-              <Input
-                {...field}
-                id="password"
-                type={verPassword ? "text" : "password"}
-                autoComplete="current-password"
-                aria-invalid={fieldState.invalid}
-                className="pr-11"
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                onClick={() => setVerPassword((ver) => !ver)}
-                aria-label={
-                  verPassword ? "Ocultar contraseña" : "Mostrar contraseña"
-                }
-                className="absolute top-0 right-0 text-muted-foreground hover:bg-transparent"
-              >
-                {verPassword ? <EyeOff /> : <Eye />}
-              </Button>
-            </div>
-            <FieldError errors={[fieldState.error]} />
-          </Field>
-        )}
+        label="Contraseña"
+        autoComplete="current-password"
       />
 
-      {errors.root && (
-        <p
-          role="alert"
-          className="border border-destructive/30 bg-destructive/5 px-3 py-2.5 text-sm text-destructive"
-        >
-          {errors.root.message}
-        </p>
-      )}
+      {errors.root && <ErrorFormulario>{errors.root.message}</ErrorFormulario>}
 
       <Button type="submit" size="lg" disabled={isSubmitting} className="mt-1">
         {isSubmitting ? "Ingresando…" : "Ingresar"}
       </Button>
+      <Link
+        href="/recuperar"
+        className="self-center text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+      >
+        ¿Olvidaste tu contraseña?
+      </Link>
     </form>
   );
 }

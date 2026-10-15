@@ -11,7 +11,7 @@ export function apiUrl(path: string): URL {
   return new URL(path, base);
 }
 
-type ApiFetchOptions = Omit<RequestInit, "body"> & {
+export type ApiFetchOptions =Omit<RequestInit, "body"> & {
   body?: unknown;
   token?: string;
 };
