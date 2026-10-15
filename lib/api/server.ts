@@ -13,13 +13,9 @@ export function apiUrl(path: string): URL {
 
 type ApiFetchOptions = Omit<RequestInit, "body"> & {
   body?: unknown;
-  // Access token del usuario, para los endpoints de /panel y /admin.
   token?: string;
 };
 
-// Pide datos a la API desde el servidor de Next (Server Components, Server
-// Actions, Route Handlers). El navegador nunca llama directo a la API: usa el
-// proxy /api (app/api/[...path]/route.ts).
 export async function apiFetch<T>(
   path: string,
   { body, token, headers, ...init }: ApiFetchOptions = {},

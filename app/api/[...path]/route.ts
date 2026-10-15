@@ -1,22 +1,16 @@
 import type { NextRequest } from "next/server";
 import { apiUrl } from "@/lib/api/server";
+import { REFRESH_COOKIE } from "@/lib/schemas/auth";
+import { ACCESS_COOKIE } from "@/lib/sesion";
 
-// Proxy /api/* → API. Las acciones del navegador pasan por acá, así la API
-// no necesita CORS para dominios propios y la cookie de refresh queda en el
-// dominio de la tienda.
-
-// Headers del navegador que se reenvían a la API. El resto se descarta.
 const REQUEST_HEADERS = [
   "accept",
   "accept-language",
-  "authorization",
   "content-type",
-  "cookie",
   "user-agent",
 ];
 
-// Headers de la respuesta que no se copian: los maneja cada conexión, y fetch
-// ya descomprime el cuerpo. set-cookie se copia aparte (puede venir varias veces).
+// fetch ya descomprime el cuerpo; set-cookie se copia aparte porque puede repetirse.
 const RESPONSE_HEADERS_EXCLUIDOS = new Set([
   "connection",
   "content-encoding",
@@ -39,11 +33,15 @@ async function reenviar(
     const valor = request.headers.get(nombre);
     if (valor) headers.set(nombre, valor);
   }
+  // Sesión del panel (ver lib/sesion.ts). proxy.ts ya la renovó si hacía falta.
+  const accessToken = request.cookies.get(ACCESS_COOKIE)?.value;
+  if (accessToken) headers.set("authorization", `Bearer ${accessToken}`);
+  const refreshToken = request.cookies.get(REFRESH_COOKIE)?.value;
+  if (refreshToken) headers.set("cookie", `${REFRESH_COOKIE}=${refreshToken}`);
   // La API resuelve la marca de la tienda por el host.
   const host = request.headers.get("host");
   if (host) headers.set("x-forwarded-host", host);
-  // IP real del comprador, para el límite de pedidos por IP. En Vercel la
-  // completa la plataforma; la API tiene que confiar en este header.
+  // La API tiene que confiar en este header para limitar pedidos por IP.
   const ip = request.headers.get("x-forwarded-for");
   if (ip) headers.set("x-forwarded-for", ip);
 

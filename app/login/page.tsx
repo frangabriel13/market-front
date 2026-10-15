@@ -5,7 +5,6 @@ export const metadata: Metadata = {
   title: "Ingresar",
 };
 
-// Login único para fabricantes y para Piter: el rol decide a dónde va después.
 export default function LoginPage() {
   return (
     <main className="flex flex-1 flex-col items-center px-4 py-12 sm:justify-center">

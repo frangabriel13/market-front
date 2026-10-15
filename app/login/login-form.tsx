@@ -2,14 +2,14 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
+import { unstable_rethrow } from "next/navigation";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { ApiError } from "@/lib/api/error";
 import { loginSchema, type Login, type LoginInput } from "@/lib/schemas/auth";
-import { iniciarSesion } from "./iniciar-sesion";
+import { iniciarSesion } from "./acciones";
 
 export function LoginForm() {
   const [verPassword, setVerPassword] = useState(false);
@@ -19,15 +19,16 @@ export function LoginForm() {
   });
   const { errors, isSubmitting } = form.formState;
 
+  // Si el login sale bien, la acción redirige y no vuelve.
   async function onSubmit(datos: Login) {
     try {
-      await iniciarSesion(datos);
+      const resultado = await iniciarSesion(datos);
+      if (resultado?.error) form.setError("root", { message: resultado.error });
     } catch (error) {
+      // El redirect() de la acción llega como error: se lo devuelve a Next.
+      unstable_rethrow(error);
       form.setError("root", {
-        message:
-          error instanceof ApiError
-            ? error.message
-            : "No pudimos iniciar sesión. Probá de nuevo.",
+        message: "No pudimos iniciar sesión. Probá de nuevo.",
       });
     }
   }

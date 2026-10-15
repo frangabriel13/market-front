@@ -1,5 +1,3 @@
-// Error de una respuesta no exitosa de la API. NestJS responde
-// { statusCode, message, errors? }; `message` puede venir como lista.
 export class ApiError extends Error {
   constructor(
     readonly status: number,
@@ -15,6 +13,7 @@ export async function toApiError(res: Response): Promise<ApiError> {
   const body: unknown = await res.json().catch(() => undefined);
   if (body && typeof body === "object" && "message" in body) {
     const { message, errors } = body as { message: unknown; errors?: unknown };
+    // NestJS puede mandar `message` como lista.
     const texto = Array.isArray(message) ? message.join(". ") : String(message);
     return new ApiError(res.status, texto, errors);
   }

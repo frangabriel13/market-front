@@ -4,9 +4,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Estilo base de todas las tiendas y paneles: blanco y negro, alto contraste,
-   bordes rectos. Las tiendas no tienen colores propios (fuera de alcance). */
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
