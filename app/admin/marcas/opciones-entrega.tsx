@@ -16,7 +16,7 @@ import {
   type OpcionEntrega,
 } from "@/lib/schemas/opciones-entrega";
 import { cn } from "@/lib/utils";
-import type { ErrorAccion } from "../errores";
+import type { ErrorAccion } from "@/lib/acciones/errores";
 import { OpcionEntregaForm } from "./opcion-entrega-form";
 import {
   crearOpcion,

@@ -1,13 +1,19 @@
 import { comprimirImagen } from "@/lib/comprimir-imagen";
-import { archivoImagenSchema } from "@/lib/schemas/imagenes";
-import type { ImagenMarca } from "@/lib/schemas/marcas";
-import { pedirUrlDeImagen } from "./acciones";
+import {
+  archivoImagenSchema,
+  type ArchivoImagen,
+  type UrlDeSubida,
+} from "@/lib/schemas/imagenes";
 
-// Comprime, pide la URL firmada y sube directo al almacenamiento. Devuelve la URL pública.
+type PedirUrl = (
+  archivo: ArchivoImagen,
+) => Promise<{ subida: UrlDeSubida } | { error: string }>;
+
+// Comprime, pide la URL firmada con `pedirUrl` y sube directo al
+// almacenamiento. Devuelve la URL pública.
 export async function subirImagen(
-  marcaId: string,
-  tipo: ImagenMarca["tipo"],
   archivo: File,
+  pedirUrl: PedirUrl,
 ): Promise<{ url: string } | { error: string }> {
   let imagen: Blob;
   try {
@@ -24,7 +30,7 @@ export async function subirImagen(
     return { error: datos.error.issues[0]?.message ?? "Imagen inválida." };
   }
 
-  const resultado = await pedirUrlDeImagen(marcaId, { tipo, ...datos.data });
+  const resultado = await pedirUrl(datos.data);
   if ("error" in resultado) return resultado;
 
   const res = await fetch(resultado.subida.uploadUrl, {

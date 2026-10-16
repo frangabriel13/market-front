@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { unstable_rethrow } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Controller, useForm, useWatch, type Path } from "react-hook-form";
+import { CampoPesos } from "@/components/form/campo-pesos";
 import { CampoTexto } from "@/components/form/campo-texto";
 import { ListaEditable } from "@/components/form/lista-editable";
 import { Button } from "@/components/ui/button";
@@ -17,7 +18,6 @@ import {
   FieldLegend,
   FieldSet,
 } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import {
   marcaCrearSchema,
   type Marca,
@@ -27,7 +27,7 @@ import {
 import { formatearTelefono } from "@/lib/schemas/telefono";
 import { slugify } from "@/lib/slugify";
 import { crearMarca, editarMarca } from "./acciones";
-import type { ErrorAccion } from "../errores";
+import type { ErrorAccion } from "@/lib/acciones/errores";
 import { TextosBanner } from "./textos-banner";
 
 type Props = { marca?: Marca; dominio: string };
@@ -173,34 +173,11 @@ export function MarcaForm({ marca, dominio }: Props) {
       <FieldSet>
         <FieldLegend>Venta</FieldLegend>
         <FieldGroup>
-          <Controller
+          <CampoPesos
             control={control}
             name="minimoCompra"
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="minimoCompra">Mínimo de compra</FieldLabel>
-                <div className="relative">
-                  <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted-foreground">
-                    $
-                  </span>
-                  <Input
-                    id="minimoCompra"
-                    inputMode="numeric"
-                    maxLength={11}
-                    className="pl-7"
-                    value={field.value?.toLocaleString("es-AR") ?? ""}
-                    onChange={(e) => {
-                      const digitos = e.target.value.replace(/\D/g, "");
-                      field.onChange(digitos ? Number(digitos) : undefined);
-                    }}
-                    onBlur={field.onBlur}
-                    aria-invalid={fieldState.invalid}
-                  />
-                </div>
-                <FieldDescription>Con 0 no hay mínimo.</FieldDescription>
-                <FieldError errors={[fieldState.error]} />
-              </Field>
-            )}
+            label="Mínimo de compra"
+            descripcion="Con 0 no hay mínimo."
           />
           <CampoTexto
             control={control}

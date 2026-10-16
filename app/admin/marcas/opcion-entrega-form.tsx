@@ -13,7 +13,7 @@ import {
   type OpcionEntregaCrearInput,
 } from "@/lib/schemas/opciones-entrega";
 import { cn } from "@/lib/utils";
-import type { ErrorAccion } from "../errores";
+import type { ErrorAccion } from "@/lib/acciones/errores";
 
 type Props = {
   valores?: OpcionEntregaCrearInput;

@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { FORMATOS_IMAGEN } from "@/lib/schemas/imagenes";
 import type { ImagenMarca, Marca } from "@/lib/schemas/marcas";
 import { cn } from "@/lib/utils";
-import { editarMarca } from "./acciones";
-import { subirImagen } from "./subir-imagen";
+import { subirImagen } from "@/lib/subir-imagen";
+import { editarMarca, pedirUrlDeImagen } from "./acciones";
 
 type CampoImagen = "logoUrl" | "portadaUrl" | "guiaTallesUrl";
 
@@ -88,7 +88,9 @@ function ImagenMarcaCampo({
   function subir(archivo: File) {
     setError(undefined);
     startTransition(async () => {
-      const subida = await subirImagen(marcaId, tipo, archivo);
+      const subida = await subirImagen(archivo, (datos) =>
+        pedirUrlDeImagen(marcaId, { tipo, ...datos }),
+      );
       if ("error" in subida) return setError(subida.error);
       const guardado = await guardar(subida.url);
       if (guardado) setError(guardado.error);

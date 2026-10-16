@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { CampoTexto } from "@/components/form/campo-texto";
 import { Button } from "@/components/ui/button";
 import { categoriaCrearSchema } from "@/lib/schemas/categorias";
-import type { ErrorAccion } from "../errores";
+import type { ErrorAccion } from "@/lib/acciones/errores";
 
 const nombreSchema = categoriaCrearSchema.pick({ nombre: true });
 type Nombre = { nombre: string };

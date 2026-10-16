@@ -8,7 +8,7 @@ import {
   type OpcionEntregaCrearInput,
   type OpcionEntregaEditar,
 } from "@/lib/schemas/opciones-entrega";
-import { DATOS_INVALIDOS, errorDeApi, type ErrorAccion } from "../errores";
+import { DATOS_INVALIDOS, errorDeApi, type ErrorAccion } from "@/lib/acciones/errores";
 
 function ruta(marcaId: string, opcionId?: string): string {
   const base = `admin/marcas/${encodeURIComponent(marcaId)}/opciones-entrega`;
