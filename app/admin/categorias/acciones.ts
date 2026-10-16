@@ -8,7 +8,7 @@ import {
   type CategoriaCrearInput,
   type CategoriaEditarInput,
 } from "@/lib/schemas/categorias";
-import { DATOS_INVALIDOS, errorDeApi, type ErrorAccion } from "../errores";
+import { DATOS_INVALIDOS, errorDeApi, type ErrorAccion } from "@/lib/acciones/errores";
 
 const NOMBRE_EN_USO = {
   campo: "nombre",

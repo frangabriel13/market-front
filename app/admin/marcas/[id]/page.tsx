@@ -10,7 +10,7 @@ import { AccesoFabricanteSeccion } from "../acceso-fabricante";
 import { ImagenesMarca } from "../imagenes-marca";
 import { MarcaForm } from "../marca-form";
 import { OpcionesEntrega } from "../opciones-entrega";
-import { VolverAMarcas } from "../volver";
+import { Volver } from "@/components/volver";
 
 export const metadata: Metadata = {
   title: "Editar marca",
@@ -21,7 +21,7 @@ export default function EditarMarcaPage({
 }: PageProps<"/admin/marcas/[id]">) {
   return (
     <>
-      <VolverAMarcas />
+      <Volver href="/admin" texto="Marcas" />
       <Suspense fallback={<EditarMarcaCargando />}>
         <EditarMarca params={params} />
       </Suspense>

@@ -17,7 +17,7 @@ import {
   type MarcaCrearInput,
   type MarcaEditarInput,
 } from "@/lib/schemas/marcas";
-import { DATOS_INVALIDOS, errorDeApi, type ErrorAccion } from "../errores";
+import { DATOS_INVALIDOS, errorDeApi, type ErrorAccion } from "@/lib/acciones/errores";
 
 const SLUG_EN_USO = {
   campo: "slug",
