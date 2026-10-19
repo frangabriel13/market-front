@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 
-// Contenido de los error.tsx de /panel y /admin.
+// Contenido de los error.tsx.
 export function ErrorCarga({ retry }: { retry: () => void }) {
   return (
     <div className="flex flex-col items-center gap-4 py-10 text-center">
