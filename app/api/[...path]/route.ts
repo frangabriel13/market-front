@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
 import { apiUrl } from "@/lib/api/server";
 import { REFRESH_COOKIE } from "@/lib/schemas/auth";
+import { HEADER_HOST_TIENDA } from "@/lib/schemas/tienda";
 import { ACCESS_COOKIE } from "@/lib/sesion";
 
 const REQUEST_HEADERS = [
@@ -40,7 +41,7 @@ async function reenviar(
   if (refreshToken) headers.set("cookie", `${REFRESH_COOKIE}=${refreshToken}`);
   // La API resuelve la marca de la tienda por el host.
   const host = request.headers.get("host");
-  if (host) headers.set("x-forwarded-host", host);
+  if (host) headers.set(HEADER_HOST_TIENDA, host);
   // La API tiene que confiar en este header para limitar pedidos por IP.
   const ip = request.headers.get("x-forwarded-for");
   if (ip) headers.set("x-forwarded-for", ip);

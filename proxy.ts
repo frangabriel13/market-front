@@ -1,5 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { ApiError } from "@/lib/api/server";
+import { tiendaFetch } from "@/lib/api/tienda";
 import { REFRESH_COOKIE } from "@/lib/schemas/auth";
+import { identificarTienda } from "@/lib/schemas/tienda";
 import {
   ACCESS_COOKIE,
   autenticar,
@@ -10,12 +13,64 @@ import {
   type CookieDeSesion,
 } from "@/lib/sesion";
 
+// Las tiendas (<slug>.<PLATFORM_DOMAIN> o un dominio propio) se sirven desde
+// app/tienda/[host]; los paneles, solo desde PLATFORM_DOMAIN.
+const RUTAS_DE_TIENDA = "/tienda";
+const RUTAS_CON_SESION = ["/panel", "/admin", "/login", "/api"];
+
+export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  // En desarrollo, nextUrl trae localhost aunque se pida un subdominio.
+  const host = hostSinPuerto(request.headers.get("host") ?? "");
+  const tienda = identificarTienda(host, process.env.PLATFORM_DOMAIN ?? "");
+
+  if (tienda && !pathname.startsWith("/api/")) return abrirTienda(request, host);
+  if (!tienda && esDeLaSeccion(pathname, RUTAS_DE_TIENDA)) {
+    return NextResponse.rewrite(new URL("/404", request.url));
+  }
+  if (!RUTAS_CON_SESION.some((ruta) => esDeLaSeccion(pathname, ruta))) {
+    return NextResponse.next();
+  }
+  return controlarSesion(request);
+}
+
+const hostSinPuerto = (host: string) =>
+  host.trim().toLowerCase().replace(/:\d+$/, "");
+
+const esDeLaSeccion = (pathname: string, seccion: string) =>
+  pathname === seccion || pathname.startsWith(`${seccion}/`);
+
+async function abrirTienda(
+  request: NextRequest,
+  host: string,
+): Promise<NextResponse> {
+  const url = request.nextUrl.clone();
+  if (!(await tiendaDisponible(host))) {
+    url.pathname = `${RUTAS_DE_TIENDA}/no-disponible`;
+    return NextResponse.rewrite(url, { status: 404 });
+  }
+  const { pathname } = request.nextUrl;
+  url.pathname = `${RUTAS_DE_TIENDA}/${host}${pathname === "/" ? "" : pathname}`;
+  return NextResponse.rewrite(url);
+}
+
+// Solo el 404 de la API significa "no disponible": si la API falla, la página
+// muestra el error y se puede reintentar.
+async function tiendaDisponible(host: string): Promise<boolean> {
+  try {
+    await tiendaFetch(host, "tienda");
+    return true;
+  } catch (error) {
+    return !(error instanceof ApiError && error.status === 404);
+  }
+}
+
 // Antes de /panel, /admin, /login y el proxy /api:
 //   - Si el access token venció y hay refresh token, lo renueva.
 //   - /panel y /admin: sin sesión van a /login; con el rol equivocado, a su sección.
 //   - /login con sesión va directo a su sección.
 // Son chequeos para la experiencia de uso: la API verifica el token en cada pedido.
-export async function proxy(request: NextRequest) {
+async function controlarSesion(request: NextRequest): Promise<NextResponse> {
   const { pathname } = request.nextUrl;
 
   // login, refresh y logout los hacen las Server Actions y este archivo.
@@ -86,5 +141,5 @@ function redirigir(request: NextRequest, destino: string): NextResponse {
 }
 
 export const config = {
-  matcher: ["/panel/:path*", "/admin/:path*", "/login", "/api/:path*"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
