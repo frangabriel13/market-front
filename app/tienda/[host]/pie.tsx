@@ -7,9 +7,10 @@ import {
   IconoWhatsapp,
 } from "@/components/iconos-redes";
 import { Button } from "@/components/ui/button";
+import { ETIQUETAS_TEXTO_LEGAL } from "@/lib/schemas/legales";
 import type { Redes } from "@/lib/schemas/marcas";
 import { obtenerMarca } from "./datos";
-import { RUTA_COMO_COMPRAR, RUTA_CONDICIONES } from "./rutas";
+import { RUTA_COMO_COMPRAR, RUTA_CONDICIONES, RUTAS_LEGALES } from "./rutas";
 
 const REDES: {
   clave: keyof Redes;
@@ -34,6 +35,10 @@ export async function Pie({ params }: { params: Promise<{ host: string }> }) {
     ...(marca.condicionesVenta
       ? [{ href: RUTA_CONDICIONES, texto: "Condiciones de venta" }]
       : []),
+    ...marca.textosLegales.map((tipo) => ({
+      href: RUTAS_LEGALES[tipo],
+      texto: ETIQUETAS_TEXTO_LEGAL[tipo],
+    })),
   ];
   return (
     <footer className="mt-12 bg-foreground text-background">
@@ -57,7 +62,7 @@ export async function Pie({ params }: { params: Promise<{ host: string }> }) {
           </ul>
         )}
         <nav aria-label="Información">
-          <ul className="flex gap-6 text-sm">
+          <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm">
             {paginas.map(({ href, texto }) => (
               <li key={href}>
                 <Link href={href} className="underline-offset-4 hover:underline">
