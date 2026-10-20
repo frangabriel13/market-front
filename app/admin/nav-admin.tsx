@@ -17,6 +17,11 @@ const SECCIONES = [
     texto: "Categorías",
     activa: (ruta: string) => ruta.startsWith("/admin/categorias"),
   },
+  {
+    href: "/admin/legales",
+    texto: "Textos legales",
+    activa: (ruta: string) => ruta.startsWith("/admin/legales"),
+  },
 ];
 
 // En las rutas con id (ej. /admin/marcas/[id]) la ruta recién se conoce al

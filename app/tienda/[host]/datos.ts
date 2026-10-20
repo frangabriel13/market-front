@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { cache } from "react";
 import { ApiError } from "@/lib/api/server";
 import { tiendaFetch } from "@/lib/api/tienda";
+import type { TextoLegal, TipoTextoLegal } from "@/lib/schemas/legales";
 import type {
   CategoriaTienda,
   MarcaTienda,
@@ -35,6 +36,10 @@ export const obtenerProducto = cache((host: string, id: string) =>
     tiendaFetch<ProductoTienda>(host, `tienda/productos/${encodeURIComponent(id)}`),
   ),
 );
+
+// Son de la plataforma: el host no cambia el texto.
+export const obtenerTextoLegal = (host: string, tipo: TipoTextoLegal) =>
+  oNoEncontrado(tiendaFetch<TextoLegal>(host, `tienda/legales/${tipo}`));
 
 // 400: parámetro con formato inválido; 404: no existe o no está visible.
 async function oNoEncontrado<T>(pedido: Promise<T>): Promise<T> {
