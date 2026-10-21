@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 
 export default function CarritoPage({ params }: PageProps<"/tienda/[host]/carrito">) {
   return (
-    <div className="mx-auto w-full max-w-2xl px-4 pt-6">
-      <h1 className="mb-4 text-xl font-bold tracking-wide uppercase">Tu pedido</h1>
+    <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col px-4 pt-6">
+      <h1 className="titulo mb-4 text-3xl">Tu pedido</h1>
       <Suspense fallback={<CarritoCargando />}>
         <CarritoDeLaMarca params={params} />
       </Suspense>
@@ -19,6 +19,11 @@ export default function CarritoPage({ params }: PageProps<"/tienda/[host]/carrit
 }
 
 async function CarritoDeLaMarca({ params }: { params: Promise<{ host: string }> }) {
-  const { minimoCompra } = await obtenerMarca((await params).host);
-  return <Carrito minimoCompra={minimoCompra} />;
+  const marca = await obtenerMarca((await params).host);
+  return (
+    <Carrito
+      minimoCompra={marca.minimoCompra}
+      hayEnvio={marca.opcionesEntrega.some((o) => o.tipo === "ENVIO")}
+    />
+  );
 }

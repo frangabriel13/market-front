@@ -52,7 +52,7 @@ export function AccesoFabricanteSeccion({ marca }: { marca: Marca }) {
   return (
     <section className="mb-8 flex flex-col gap-4">
       <div>
-        <h2 className="text-base font-medium">Acceso del fabricante</h2>
+        <h2 className="text-sm font-bold tracking-wider uppercase">Acceso del fabricante</h2>
         <p className="text-sm text-muted-foreground">
           {tieneAcceso
             ? "Generá una contraseña nueva si la olvidó. Si cambiás el email, entra con el nuevo."

@@ -1,36 +1,54 @@
 import Image from "next/image";
 import { Suspense } from "react";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { obtenerDestacados, obtenerMarca } from "./datos";
+import { cn } from "@/lib/utils";
+import { ChipsCategorias } from "./chips-categorias";
+import { obtenerCategorias, obtenerDestacados, obtenerMarca } from "./datos";
 import { GrillaProductos, GrillaProductosCargando } from "./grilla-productos";
 
 type Params = { params: Promise<{ host: string }> };
 
+const DESTACADOS = "destacados";
+
 export default function InicioTiendaPage({ params }: PageProps<"/tienda/[host]">) {
   return (
     <>
-      <Suspense fallback={<Skeleton className="aspect-video rounded-none" />}>
+      <Suspense fallback={<Skeleton className="aspect-[5/4] rounded-none" />}>
         <Portada params={params} />
       </Suspense>
-      <section className="mx-auto w-full max-w-5xl px-4 pt-8">
-        <h2 className="mb-4 text-center text-lg font-bold tracking-widest uppercase">
-          Destacados
-        </h2>
-        <Suspense fallback={<GrillaProductosCargando />}>
-          <Destacados params={params} />
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 pt-5">
+        <Suspense>
+          <Categorias params={params} />
         </Suspense>
-      </section>
+        <section id={DESTACADOS} className="scroll-mt-32">
+          <h2 className="titulo mb-4 text-2xl">Destacados</h2>
+          <Suspense fallback={<GrillaProductosCargando />}>
+            <Destacados params={params} />
+          </Suspense>
+        </section>
+      </div>
     </>
   );
 }
 
+// El primer texto del banner es el título; los demás, la bajada.
 async function Portada({ params }: Params) {
   const marca = await obtenerMarca((await params).host);
+  const [titulo, ...bajada] = marca.textosBanner;
+  if (!marca.portadaUrl && !titulo) {
+    return <h1 className="sr-only">{marca.nombre}</h1>;
+  }
+  const conFoto = Boolean(marca.portadaUrl);
   return (
-    <section>
-      <h1 className="sr-only">{marca.nombre}</h1>
+    <section
+      className={cn(
+        "relative flex aspect-[5/4] flex-col justify-end px-4 py-6 sm:aspect-[21/9]",
+        conFoto ? "text-white" : "bg-[#d9dce1]",
+      )}
+    >
       {marca.portadaUrl && (
-        <div className="relative aspect-video bg-muted">
+        <>
           <Image
             src={marca.portadaUrl}
             alt=""
@@ -39,17 +57,31 @@ async function Portada({ params }: Params) {
             priority
             className="object-cover"
           />
-        </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent" />
+        </>
       )}
-      {marca.textosBanner.length > 0 && (
-        <ul className="flex flex-col gap-1 bg-foreground px-4 py-3 text-center text-xs font-bold tracking-wide text-background uppercase">
-          {marca.textosBanner.map((texto, i) => (
-            <li key={i}>{texto}</li>
-          ))}
-        </ul>
-      )}
+      <div className="relative mx-auto w-full max-w-5xl">
+        <h1 className="titulo text-4xl">{titulo ?? marca.nombre}</h1>
+        {bajada.map((texto, i) => (
+          <p key={i} className="mt-2 text-base">
+            {texto}
+          </p>
+        ))}
+        <Button
+          asChild
+          size="lg"
+          className={cn("mt-4", conFoto && "bg-white text-foreground hover:bg-white/90")}
+        >
+          <a href={`#${DESTACADOS}`}>Ver productos</a>
+        </Button>
+      </div>
     </section>
   );
+}
+
+async function Categorias({ params }: Params) {
+  const categorias = await obtenerCategorias((await params).host);
+  return <ChipsCategorias chips={categorias} />;
 }
 
 async function Destacados({ params }: Params) {

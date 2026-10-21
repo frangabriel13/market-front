@@ -4,9 +4,10 @@ import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatearPrecio } from "@/lib/formato";
 import type { ProductoTiendaResumen } from "@/lib/schemas/tienda";
+import { cn } from "@/lib/utils";
 import { rutaProducto } from "./rutas";
 
-const GRILLA = "grid grid-cols-2 gap-x-2 gap-y-5 sm:grid-cols-3 lg:grid-cols-4";
+const GRILLA = "grid grid-cols-2 gap-x-3 gap-y-6 sm:grid-cols-3 lg:grid-cols-4";
 
 export function GrillaProductos({
   productos,
@@ -40,15 +41,17 @@ function TarjetaProducto({ producto }: { producto: ProductoTiendaResumen }) {
           <ImageIcon className="absolute inset-0 m-auto size-6 text-muted-foreground" />
         )}
         {producto.agotado && (
-          <span className="absolute inset-x-0 bottom-0 bg-foreground/80 py-1.5 text-center text-xs font-bold tracking-wide text-background uppercase">
+          <span className="absolute top-2 left-2 bg-foreground px-2 py-1 text-xs font-bold tracking-wide text-background uppercase">
             Agotado
           </span>
         )}
       </div>
-      <p className="mt-2 line-clamp-2 text-sm leading-snug group-hover:underline">
-        {producto.nombre}
-      </p>
-      <p className="mt-0.5 font-bold">{formatearPrecio(producto.precio)}</p>
+      <div className={cn("mt-2", producto.agotado && "text-muted-foreground")}>
+        <p className="line-clamp-2 text-sm leading-snug font-bold uppercase group-hover:underline">
+          {producto.nombre}
+        </p>
+        <p className="mt-0.5 font-bold">{formatearPrecio(producto.precio)}</p>
+      </div>
     </Link>
   );
 }

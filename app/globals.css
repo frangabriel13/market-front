@@ -7,8 +7,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-mulish);
-  --font-heading: var(--font-mulish);
+  --font-sans: var(--font-archivo);
+  --font-heading: var(--font-archivo);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -22,6 +22,8 @@
   --color-border: var(--border);
   --color-destructive: var(--destructive);
   --color-success: var(--success);
+  --color-destacado: var(--destacado);
+  --color-destacado-foreground: var(--destacado-foreground);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
@@ -45,33 +47,43 @@
 
 :root {
   --background: oklch(1 0 0);
-  --foreground: oklch(0.2 0 0);
+  --foreground: #13171a;
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2 0 0);
+  --card-foreground: #13171a;
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2 0 0);
-  --primary: oklch(0 0 0);
+  --popover-foreground: #13171a;
+  --primary: #13171a;
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.2 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.52 0 0);
-  --accent: oklch(0.95 0 0);
-  --accent-foreground: oklch(0.2 0 0);
+  --secondary: #f3f4f6;
+  --secondary-foreground: #13171a;
+  --muted: #f3f4f6;
+  --muted-foreground: #676c72;
+  --accent: #e5e7eb;
+  --accent-foreground: #13171a;
   --destructive: oklch(0.56 0.21 27);
-  --success: oklch(0.52 0.13 150);
-  --border: oklch(0.9 0 0);
-  --input: oklch(0.86 0 0);
-  --ring: oklch(0 0 0);
+  --success: #0f7a4e;
+  /* Franja de avisos de la tienda. */
+  --destacado: #c3410d;
+  --destacado-foreground: #ffffff;
+  --border: #e5e7eb;
+  --input: #a1a7ae;
+  --ring: #13171a;
   --radius: 0.125rem;
   --sidebar: oklch(0.98 0 0);
-  --sidebar-foreground: oklch(0.2 0 0);
-  --sidebar-primary: oklch(0 0 0);
+  --sidebar-foreground: #13171a;
+  --sidebar-primary: #13171a;
   --sidebar-primary-foreground: oklch(1 0 0);
   --sidebar-accent: oklch(0.95 0 0);
-  --sidebar-accent-foreground: oklch(0.2 0 0);
+  --sidebar-accent-foreground: #13171a;
   --sidebar-border: oklch(0.9 0 0);
-  --sidebar-ring: oklch(0 0 0);
+  --sidebar-ring: #13171a;
+}
+
+/* Títulos de la tienda, como en el boceto. */
+@utility titulo {
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: 1.05;
 }
 
 @layer base {

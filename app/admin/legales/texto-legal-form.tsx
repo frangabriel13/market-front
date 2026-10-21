@@ -58,7 +58,7 @@ export function TextoLegalForm({ texto }: { texto: TextoLegal }) {
       className="flex flex-col gap-3"
     >
       <div>
-        <h2 className="text-base font-medium">{titulo}</h2>
+        <h2 className="text-sm font-bold tracking-wider uppercase">{titulo}</h2>
         <p className="text-sm text-muted-foreground">
           {publicado && texto.actualizadoEn
             ? `Publicado. Última actualización: ${formatearFecha(texto.actualizadoEn)}.`

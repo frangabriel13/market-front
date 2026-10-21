@@ -14,54 +14,54 @@ export async function ListaProductos() {
   if (productos.length === 0) {
     return (
       <p className="py-10 text-center text-sm text-muted-foreground">
-        Todavía no cargaste productos.
+        Todavía no cargaste productos. Empezá con el botón de arriba.
       </p>
     );
   }
 
   return (
-    <>
-      <p className="mb-3 text-sm text-muted-foreground">
-        {productos.length === 1 ? "1 producto" : `${productos.length} productos`}
-      </p>
-      <ul className="divide-y border-y">
-        {productos.map((producto) => (
-          <li key={producto.id} className="flex items-center gap-3 py-3">
-            <Link
-              href={`/panel/productos/${producto.id}`}
+    <ul className="flex flex-col gap-3">
+      {productos.map((producto) => (
+        <li
+          key={producto.id}
+          className="flex items-center gap-3 border bg-background p-3"
+        >
+          <Link
+            href={`/panel/productos/${producto.id}`}
+            className="flex min-w-0 flex-1 items-center gap-3"
+          >
+            <Miniatura url={producto.miniatura} nombre={producto.nombre} />
+            <div
               className={cn(
-                "flex min-w-0 flex-1 items-center gap-3",
-                !producto.visible && "opacity-50",
+                "min-w-0",
+                !producto.visible && "text-muted-foreground",
               )}
             >
-              <Miniatura url={producto.miniatura} nombre={producto.nombre} />
-              <div className="min-w-0">
-                <p className="line-clamp-2 leading-snug font-semibold">
-                  {producto.nombre}
-                </p>
-                <p className="truncate text-sm text-muted-foreground">
-                  {producto.categoria.nombre}
-                </p>
-                <p className="mt-1 font-bold">
-                  {formatearPrecio(producto.precio)}
-                </p>
-              </div>
-            </Link>
-            <InterruptorVisible
-              productoId={producto.id}
-              nombre={producto.nombre}
-              visible={producto.visible}
-            />
-          </li>
-        ))}
-      </ul>
-    </>
+              <p className="line-clamp-2 leading-snug font-bold">
+                {producto.nombre}
+              </p>
+              <p className="truncate text-sm">
+                {formatearPrecio(producto.precio)} · {producto.categoria.nombre}
+              </p>
+              {!producto.visible && (
+                <p className="text-sm">Oculto: no se ve en la tienda</p>
+              )}
+            </div>
+          </Link>
+          <InterruptorVisible
+            productoId={producto.id}
+            nombre={producto.nombre}
+            visible={producto.visible}
+          />
+        </li>
+      ))}
+    </ul>
   );
 }
 
 function Miniatura({ url, nombre }: { url: string | null; nombre: string }) {
   return (
-    <div className="relative aspect-[3/4] w-16 shrink-0 overflow-hidden bg-muted">
+    <div className="relative aspect-[4/5] w-16 shrink-0 overflow-hidden bg-muted">
       {url ? (
         <Image src={url} alt={nombre} fill unoptimized className="object-cover" />
       ) : (
@@ -73,10 +73,10 @@ function Miniatura({ url, nombre }: { url: string | null; nombre: string }) {
 
 export function ListaProductosCargando() {
   return (
-    <ul className="divide-y border-y" aria-busy="true">
+    <ul className="flex flex-col gap-3" aria-busy="true">
       {Array.from({ length: 4 }, (_, i) => (
-        <li key={i} className="flex items-center gap-3 py-3">
-          <Skeleton className="aspect-[3/4] w-16" />
+        <li key={i} className="flex items-center gap-3 border bg-background p-3">
+          <Skeleton className="aspect-[4/5] w-16 rounded-none" />
           <div className="flex-1 space-y-2">
             <Skeleton className="h-4 w-36" />
             <Skeleton className="h-3.5 w-20" />

@@ -1,8 +1,8 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, Loader2, Plus, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import Image from "next/image";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { idsMovidos } from "@/components/botones-orden";
 import {
   AlertDialog,
@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useAccion } from "@/hooks/use-accion";
-import { FORMATOS_IMAGEN } from "@/lib/schemas/imagenes";
 import { MAXIMO_FOTOS, type FotoProducto } from "@/lib/schemas/productos";
 import { subirImagen } from "@/lib/subir-imagen";
 import { cn } from "@/lib/utils";
@@ -26,6 +25,7 @@ import {
   quitarFoto,
   registrarFoto,
 } from "./fotos-acciones";
+import { ElegirFotos } from "./elegir-fotos";
 
 type Props = { productoId: string; fotos: FotoProducto[] };
 
@@ -36,7 +36,6 @@ export function FotosProducto({ productoId, fotos }: Props) {
   const subiendo = progreso !== undefined;
   const [erroresSubida, setErroresSubida] = useState<string[]>([]);
   const [aQuitar, setAQuitar] = useState<FotoProducto>();
-  const input = useRef<HTMLInputElement>(null);
   const lugares = MAXIMO_FOTOS - fotos.length;
   const ocupado = pendiente || subiendo;
 
@@ -72,9 +71,9 @@ export function FotosProducto({ productoId, fotos }: Props) {
   }
 
   return (
-    <section className="mb-8 flex flex-col gap-3">
+    <section className="flex flex-col gap-2">
       <div className="flex items-baseline justify-between">
-        <h2 className="text-base font-medium">Fotos</h2>
+        <h2 className="text-sm font-semibold">Fotos</h2>
         <p className="text-sm text-muted-foreground">
           {fotos.length} de {MAXIMO_FOTOS}
         </p>
@@ -84,10 +83,19 @@ export function FotosProducto({ productoId, fotos }: Props) {
         className={cn("grid grid-cols-3 gap-2", pendiente && "opacity-60")}
         aria-busy={ocupado}
       >
+        {lugares > 0 && (
+          <ElegirFotos
+            disabled={ocupado}
+            progreso={
+              progreso && `Subiendo ${progreso.actual} de ${progreso.total}…`
+            }
+            onArchivos={subir}
+          />
+        )}
         {fotos.map((foto, i) => (
           <li
             key={foto.id}
-            className="relative aspect-[3/4] overflow-hidden bg-muted"
+            className="relative aspect-square overflow-hidden bg-muted"
           >
             <Image
               src={foto.urlMiniatura}
@@ -135,41 +143,7 @@ export function FotosProducto({ productoId, fotos }: Props) {
             </div>
           </li>
         ))}
-
-        {lugares > 0 && (
-          <li className="aspect-[3/4]">
-            <button
-              type="button"
-              disabled={ocupado}
-              onClick={() => input.current?.click()}
-              className="flex size-full flex-col items-center justify-center gap-1 border border-dashed text-sm text-muted-foreground hover:bg-muted disabled:opacity-60"
-            >
-              {subiendo ? (
-                <Loader2 className="size-5 animate-spin" />
-              ) : (
-                <Plus className="size-5" />
-              )}
-              {progreso
-                ? `Subiendo ${progreso.actual} de ${progreso.total}…`
-                : "Agregar fotos"}
-            </button>
-          </li>
-        )}
       </ul>
-
-      <input
-        ref={input}
-        type="file"
-        multiple
-        accept={FORMATOS_IMAGEN.join(",")}
-        className="hidden"
-        aria-label="Elegir fotos"
-        onChange={(evento) => {
-          const archivos = [...(evento.target.files ?? [])];
-          evento.target.value = "";
-          if (archivos.length > 0) subir(archivos);
-        }}
-      />
 
       {[...erroresSubida, ...(error ? [error] : [])].map((mensaje) => (
         <p key={mensaje} role="alert" className="text-sm text-destructive">

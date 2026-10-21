@@ -2,7 +2,6 @@
 
 import { Ruler } from "lucide-react";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
@@ -15,10 +14,13 @@ export function GuiaTalles({ url }: { url: string }) {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="link" className="h-auto p-0 text-foreground">
-          <Ruler />
+        <button
+          type="button"
+          className="flex w-full items-center justify-between border-b py-3 text-sm font-bold tracking-wider uppercase"
+        >
           Guía de talles
-        </Button>
+          <Ruler className="size-4" />
+        </button>
       </SheetTrigger>
       <SheetContent side="bottom" className="max-h-[85dvh] gap-0" aria-describedby={undefined}>
         <SheetHeader className="border-b">

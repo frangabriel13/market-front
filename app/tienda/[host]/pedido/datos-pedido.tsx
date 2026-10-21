@@ -6,7 +6,9 @@ import Link from "next/link";
 import { unstable_rethrow, useRouter } from "next/navigation";
 import { useLayoutEffect, useState } from "react";
 import { Controller, useForm, useWatch, type Control } from "react-hook-form";
+import { CampoLista } from "@/components/form/campo-lista";
 import { CampoTexto } from "@/components/form/campo-texto";
+import { IconoWhatsapp } from "@/components/iconos-redes";
 import { ErrorFormulario } from "@/components/form/error-formulario";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -20,6 +22,7 @@ import {
 } from "@/lib/carrito";
 import { formatearPrecio } from "@/lib/formato";
 import { guardarPedidoArmado } from "@/lib/pedido-armado";
+import { PROVINCIAS } from "@/lib/provincias";
 import { ETIQUETAS_TIPO_ENTREGA } from "@/lib/schemas/opciones-entrega";
 import {
   pedidoCrearSchema,
@@ -33,16 +36,6 @@ import { crearPedido } from "./acciones";
 
 type Props = { marca: MarcaTienda };
 
-// TODO(decision): DNI y CUIT opcionales en envío.
-const CAMPOS_DE_ENVIO = [
-  { name: "dni", label: "DNI (opcional)", inputMode: "numeric" },
-  { name: "cuit", label: "CUIT (opcional)", inputMode: "numeric" },
-  { name: "direccion", label: "Dirección", autoComplete: "street-address", maxLength: 200 },
-  { name: "localidad", label: "Localidad", autoComplete: "address-level2", maxLength: 100 },
-  { name: "provincia", label: "Provincia", autoComplete: "address-level1", maxLength: 60 },
-  { name: "transporte", label: "Transporte o expreso (opcional)", maxLength: 100 },
-  { name: "observaciones", label: "Observaciones (opcional)", multilinea: true, maxLength: 500 },
-] as const;
 
 export function DatosPedido({ marca }: Props) {
   const items = useCarrito((carrito) => carrito.items);
@@ -177,16 +170,6 @@ function FormularioPedido({
       }}
       className="flex flex-col gap-8"
     >
-      <p className="flex items-baseline justify-between border-y py-3 text-sm">
-        <span>
-          {unidades} {unidades === 1 ? "unidad" : "unidades"} ·{" "}
-          <strong>{formatearPrecio(totalDe(items))}</strong>
-        </span>
-        <Link href={RUTA_CARRITO} className="underline underline-offset-4">
-          Editar pedido
-        </Link>
-      </p>
-
       <ElegirEntrega
         control={form.control}
         marca={marca}
@@ -194,19 +177,19 @@ function FormularioPedido({
       />
 
       <section className="flex flex-col gap-4">
-        <h2 className="text-sm font-bold uppercase">Tus datos</h2>
+        <h2 className="text-sm font-bold tracking-wider uppercase">Tus datos</h2>
         <CampoTexto
           control={form.control}
           name="nombre"
-          label="Nombre y apellido"
+          label="Nombre completo"
           autoComplete="name"
           maxLength={80}
         />
         <CampoTexto
           control={form.control}
           name="telefono"
-          label="Teléfono"
-          descripcion="Con característica. Te contactan por WhatsApp a este número."
+          label="Celular"
+          descripcion="Con característica. Te escriben por WhatsApp a este número."
           type="tel"
           inputMode="tel"
           autoComplete="tel"
@@ -215,10 +198,63 @@ function FormularioPedido({
 
       {tipoEntrega === "ENVIO" && (
         <section className="flex flex-col gap-4">
-          <h2 className="text-sm font-bold uppercase">Datos para el envío</h2>
-          {CAMPOS_DE_ENVIO.map((campo) => (
-            <CampoTexto key={campo.name} control={form.control} {...campo} />
-          ))}
+          <h2 className="text-sm font-bold tracking-wider uppercase">
+            Datos para el envío
+          </h2>
+          {/* TODO(decision): DNI y CUIT opcionales en envío; el DNI pasa a obligatorio en la 5.14. */}
+          <div className="grid grid-cols-2 gap-3">
+            <CampoTexto
+              control={form.control}
+              name="dni"
+              label="DNI (opcional)"
+              inputMode="numeric"
+            />
+            <CampoTexto
+              control={form.control}
+              name="cuit"
+              label="CUIT (opcional)"
+              inputMode="numeric"
+            />
+          </div>
+          <CampoTexto
+            control={form.control}
+            name="direccion"
+            label="Dirección"
+            descripcion="Calle y altura. Si hace falta, piso y depto."
+            autoComplete="street-address"
+            maxLength={200}
+          />
+          <div className="grid grid-cols-2 gap-3">
+            <CampoTexto
+              control={form.control}
+              name="localidad"
+              label="Localidad"
+              autoComplete="address-level2"
+              maxLength={100}
+            />
+            <CampoLista
+              control={form.control}
+              name="provincia"
+              label="Provincia"
+              placeholder="Elegí"
+              opciones={PROVINCIAS}
+              autoComplete="address-level1"
+            />
+          </div>
+          <CampoTexto
+            control={form.control}
+            name="transporte"
+            label="Expreso o agencia (opcional)"
+            placeholder="El transporte que prefieras"
+            maxLength={100}
+          />
+          <CampoTexto
+            control={form.control}
+            name="observaciones"
+            label="Notas del pedido (opcional)"
+            multilinea
+            maxLength={500}
+          />
         </section>
       )}
 
@@ -252,7 +288,23 @@ function FormularioPedido({
         ) : (
           error && <ErrorFormulario>{error}</ErrorFormulario>
         )}
-        <Button type="submit" size="lg" disabled={form.formState.isSubmitting}>
+      </div>
+      <div className="sticky bottom-0 flex flex-col gap-3 border-t bg-background py-4">
+        <p className="flex items-baseline justify-between">
+          <span>
+            {unidades} {unidades === 1 ? "unidad" : "unidades"}
+          </span>
+          <strong className="text-2xl font-black">
+            {formatearPrecio(totalDe(items))}
+          </strong>
+        </p>
+        <Button
+          type="submit"
+          size="lg"
+          variant="success"
+          disabled={form.formState.isSubmitting}
+        >
+          <IconoWhatsapp />
           {form.formState.isSubmitting
             ? "Armando tu pedido…"
             : "Enviar pedido por WhatsApp"}
@@ -279,13 +331,17 @@ function ElegirEntrega({
       name="opcionEntregaId"
       render={({ field, fieldState }) => (
         <fieldset className="flex flex-col gap-2">
-          <legend className="mb-2 text-sm font-bold uppercase">Entrega</legend>
+          <legend className="mb-2 text-sm font-bold tracking-wider uppercase">
+            Entrega
+          </legend>
           {marca.opcionesEntrega.map((opcion) => (
             <label
               key={opcion.id}
               className={cn(
                 "flex cursor-pointer items-start gap-3 border p-3 text-sm",
-                field.value === opcion.id ? "border-foreground" : "border-border",
+                field.value === opcion.id
+                  ? "border-2 border-foreground"
+                  : "border-input",
               )}
             >
               <input

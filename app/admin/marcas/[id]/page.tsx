@@ -37,7 +37,7 @@ async function EditarMarca({ params }: { params: Promise<{ id: string }> }) {
   );
   return (
     <>
-      <h1 className="mb-6 text-2xl font-bold">{marca.nombre}</h1>
+      <h1 className="mb-6 text-2xl font-black">{marca.nombre}</h1>
       <ImagenesMarca marca={marca} />
       <AccesoFabricanteSeccion marca={marca} />
       <OpcionesEntrega marcaId={marca.id} opciones={opciones} />

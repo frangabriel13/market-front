@@ -1,14 +1,13 @@
 import Link from "next/link";
-import type { ComponentType, SVGProps } from "react";
+import type { ComponentType, ReactNode, SVGProps } from "react";
 import {
   IconoFacebook,
   IconoInstagram,
   IconoTiktok,
-  IconoWhatsapp,
 } from "@/components/iconos-redes";
-import { Button } from "@/components/ui/button";
 import { ETIQUETAS_TEXTO_LEGAL } from "@/lib/schemas/legales";
 import type { Redes } from "@/lib/schemas/marcas";
+import { formatearTelefono } from "@/lib/schemas/telefono";
 import { obtenerMarca } from "./datos";
 import { RUTA_COMO_COMPRAR, RUTA_CONDICIONES, RUTAS_LEGALES } from "./rutas";
 
@@ -23,6 +22,7 @@ const REDES: {
 ];
 
 const EXTERNO = { target: "_blank", rel: "noopener noreferrer" } as const;
+const LINK = "underline underline-offset-4 hover:no-underline";
 
 export async function Pie({ params }: { params: Promise<{ host: string }> }) {
   const marca = await obtenerMarca((await params).host);
@@ -40,39 +40,61 @@ export async function Pie({ params }: { params: Promise<{ host: string }> }) {
       texto: ETIQUETAS_TEXTO_LEGAL[tipo],
     })),
   ];
+  const hayRetiro = marca.opcionesEntrega.some((o) => o.tipo === "RETIRO");
+  const retiro = [marca.direccionRetiro, marca.horariosRetiro].filter(Boolean);
+
   return (
-    <footer className="mt-12 bg-foreground text-background">
-      <div className="mx-auto flex max-w-5xl flex-col items-center gap-6 px-4 py-10 text-center">
-        <p className="font-bold tracking-widest uppercase">{marca.nombre}</p>
-        <Button asChild variant="outline" size="lg" className="text-foreground">
-          <a href={`https://wa.me/${marca.whatsapp}`} {...EXTERNO}>
-            <IconoWhatsapp />
-            Escribinos por WhatsApp
-          </a>
-        </Button>
-        {redes.length > 0 && (
-          <ul className="flex gap-6">
-            {redes.map(({ clave, nombre, Icono, href }) => (
-              <li key={clave}>
-                <a href={href} aria-label={nombre} {...EXTERNO}>
-                  <Icono className="size-6" />
-                </a>
-              </li>
-            ))}
-          </ul>
+    <footer className="mt-16 bg-foreground text-background">
+      <div className="mx-auto flex max-w-5xl flex-col gap-6 px-4 py-10">
+        {hayRetiro && retiro.length > 0 && (
+          <Bloque titulo="Retiros">{retiro.join("\n")}</Bloque>
         )}
+        <Bloque titulo="Contacto">
+          <a
+            href={`https://wa.me/${marca.whatsapp}`}
+            className={LINK}
+            {...EXTERNO}
+          >
+            WhatsApp {formatearTelefono(marca.whatsapp)}
+          </a>
+        </Bloque>
         <nav aria-label="Información">
-          <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm">
+          <ul className="flex flex-wrap gap-x-6 gap-y-3 text-sm">
             {paginas.map(({ href, texto }) => (
               <li key={href}>
-                <Link href={href} className="underline-offset-4 hover:underline">
+                <Link href={href} className={LINK}>
                   {texto}
                 </Link>
+              </li>
+            ))}
+            {redes.map(({ clave, nombre, Icono, href }) => (
+              <li key={clave}>
+                <a
+                  href={href}
+                  className={`inline-flex items-center gap-1.5 ${LINK}`}
+                  {...EXTERNO}
+                >
+                  <Icono className="size-4" />
+                  {nombre}
+                </a>
               </li>
             ))}
           </ul>
         </nav>
       </div>
     </footer>
+  );
+}
+
+function Bloque({ titulo, children }: { titulo: string; children: ReactNode }) {
+  return (
+    <section>
+      <h2 className="mb-1 text-xs font-bold tracking-widest uppercase">
+        {titulo}
+      </h2>
+      <p className="text-sm whitespace-pre-line text-background/80">
+        {children}
+      </p>
+    </section>
   );
 }
