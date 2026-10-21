@@ -12,7 +12,7 @@ export function PaginaTexto({
 }) {
   return (
     <div className="mx-auto w-full max-w-2xl px-4 pt-6">
-      <h1 className="mb-6 text-xl font-bold tracking-wide uppercase">{titulo}</h1>
+      <h1 className="titulo mb-6 text-3xl">{titulo}</h1>
       <Suspense fallback={<TextoCargando />}>{children}</Suspense>
     </div>
   );

@@ -1,13 +1,15 @@
 "use client";
 
-import { CircleCheck } from "lucide-react";
 import Link from "next/link";
 import { IconoWhatsapp } from "@/components/iconos-redes";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useHidratado } from "@/hooks/use-hidratado";
-import { formatearPrecio } from "@/lib/formato";
 import { usePedidoArmado } from "@/lib/pedido-armado";
+
+// El texto viaja en el link de WhatsApp que arma la API.
+const mensajeDe = (whatsappUrl: string) =>
+  new URL(whatsappUrl).searchParams.get("text") ?? "";
 
 export function PedidoListo() {
   const pedido = usePedidoArmado();
@@ -27,29 +29,35 @@ export function PedidoListo() {
   }
 
   return (
-    <div className="flex flex-col items-center gap-5 text-center">
-      <CircleCheck className="size-12 text-success" aria-hidden="true" />
+    <div className="flex flex-1 flex-col gap-5">
       <div>
-        <h1 className="text-xl font-bold tracking-wide uppercase">
-          Tu pedido está armado
-        </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Pedido #{pedido.numero} · Total {formatearPrecio(pedido.total)}
+        <h1 className="titulo text-3xl">Tu pedido está armado</h1>
+        <p className="mt-2">
+          Falta un paso: tocá el botón verde y enviá el mensaje a la marca.
         </p>
       </div>
-      <p className="text-sm">
-        Para terminar, envialo por WhatsApp. Te responden para coordinar el pago
-        y la entrega.
-      </p>
-      <Button asChild size="lg" className="w-full">
-        <a href={pedido.whatsappUrl} target="_blank" rel="noopener noreferrer">
-          <IconoWhatsapp />
-          Enviar por WhatsApp
-        </a>
-      </Button>
-      <Link href="/" className="text-sm underline underline-offset-4">
-        Seguir comprando
-      </Link>
+      <section className="flex flex-col gap-2">
+        <h2 className="text-xs font-bold tracking-widest text-muted-foreground uppercase">
+          Mensaje que se va a enviar
+        </h2>
+        <p className="rounded-lg bg-muted p-4 text-sm whitespace-pre-line">
+          {mensajeDe(pedido.whatsappUrl)}
+        </p>
+      </section>
+      <div className="mt-auto flex flex-col items-center gap-3 py-4">
+        <Button asChild size="lg" variant="success" className="w-full">
+          <a href={pedido.whatsappUrl} target="_blank" rel="noopener noreferrer">
+            <IconoWhatsapp />
+            Abrir WhatsApp y enviar
+          </a>
+        </Button>
+        <Link
+          href="/"
+          className="text-sm font-semibold underline underline-offset-4"
+        >
+          Seguir viendo productos
+        </Link>
+      </div>
     </div>
   );
 }

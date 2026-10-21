@@ -1,13 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
+import { formatearPrecio } from "@/lib/formato";
 import type { MarcaTienda } from "@/lib/schemas/tienda";
-import { BarraCategorias } from "./barra-categorias";
-import { BotonCarrito } from "./boton-carrito";
+import { ControlDerecho, ControlIzquierdo } from "./controles-encabezado";
 import { obtenerCategorias, obtenerMarca } from "./datos";
-import { MenuCategorias } from "./menu-categorias";
 
-const FILA = "grid h-14 grid-cols-[2.5rem_1fr_2.5rem] items-center px-2";
+const FILA =
+  "grid h-14 grid-cols-[2.5rem_1fr_2.5rem] items-center bg-foreground px-2 text-background";
 
 export async function Encabezado({ params }: { params: Promise<{ host: string }> }) {
   const { host } = await params;
@@ -16,40 +16,53 @@ export async function Encabezado({ params }: { params: Promise<{ host: string }>
     obtenerCategorias(host),
   ]);
   return (
-    <header className="sticky top-0 z-40 border-b bg-background">
+    <header className="sticky top-0 z-40 bg-background">
+      <Franja marca={marca} />
       <div className={FILA}>
-        {categorias.length > 0 ? (
-          <MenuCategorias categorias={categorias} />
-        ) : (
-          <span />
-        )}
+        <ControlIzquierdo categorias={categorias} />
         <Link href="/" className="justify-self-center">
           <Logo marca={marca} />
         </Link>
-        <BotonCarrito />
+        <ControlDerecho />
       </div>
-      {categorias.length > 0 && <BarraCategorias categorias={categorias} />}
     </header>
+  );
+}
+
+// Lo que conviene saber antes de comprar: el mínimo y si hay envíos.
+function Franja({ marca }: { marca: MarcaTienda }) {
+  const avisos = [
+    marca.minimoCompra > 0 &&
+      `Mínimo de compra ${formatearPrecio(marca.minimoCompra)}`,
+    marca.opcionesEntrega.some((o) => o.tipo === "ENVIO") &&
+      "Envíos a todo el país",
+  ].filter(Boolean);
+  if (avisos.length === 0) return null;
+  return (
+    <p className="bg-destacado px-4 py-2 text-center text-[11px] font-bold tracking-wider text-destacado-foreground uppercase">
+      {avisos.join(" · ")}
+    </p>
   );
 }
 
 function Logo({ marca }: { marca: MarcaTienda }) {
   if (!marca.logoUrl) {
     return (
-      <span className="text-lg font-bold tracking-widest uppercase">
+      <span className="text-xl font-black tracking-wider uppercase italic">
         {marca.nombre}
       </span>
     );
   }
+  // En blanco sobre el fondo oscuro, sea cual sea el color del logo.
   return (
-    <span className="relative block h-10 w-40">
+    <span className="relative block h-9 w-40">
       <Image
         src={marca.logoUrl}
         alt={marca.nombre}
         fill
         unoptimized
         priority
-        className="object-contain"
+        className="object-contain brightness-0 invert"
       />
     </span>
   );
@@ -57,10 +70,10 @@ function Logo({ marca }: { marca: MarcaTienda }) {
 
 export function EncabezadoCargando() {
   return (
-    <header className="border-b" aria-busy="true">
+    <header aria-busy="true">
       <div className={FILA}>
         <span />
-        <Skeleton className="h-6 w-32 justify-self-center" />
+        <Skeleton className="h-6 w-32 justify-self-center bg-white/15" />
       </div>
     </header>
   );

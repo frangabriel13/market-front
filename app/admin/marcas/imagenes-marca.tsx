@@ -23,7 +23,7 @@ const IMAGENES: {
     tipo: "logo",
     campo: "logoUrl",
     titulo: "Logo",
-    descripcion: "PNG con fondo transparente, si lo tenés.",
+    descripcion: "PNG con fondo transparente. En la tienda se ve en blanco sobre el encabezado oscuro.",
     marco: "aspect-square",
   },
   {
@@ -45,7 +45,7 @@ const IMAGENES: {
 export function ImagenesMarca({ marca }: { marca: Marca }) {
   return (
     <section className="mb-8 flex flex-col gap-4">
-      <h2 className="text-base font-medium">Imágenes</h2>
+      <h2 className="text-sm font-bold tracking-wider uppercase">Imágenes</h2>
       {IMAGENES.map((imagen) => (
         <ImagenMarcaCampo
           key={imagen.tipo}

@@ -18,8 +18,8 @@ export type Variante = Pick<ItemCarrito, "productoId" | "color" | "talle">;
 
 interface Carrito {
   items: ItemCarrito[];
-  agregar: (item: ItemCarrito) => void;
-  cambiarCantidad: (variante: Variante, cantidad: number) => void;
+  // Lo que se eligió en la grilla de un producto reemplaza lo que tenía.
+  reemplazarProducto: (productoId: string, items: ItemCarrito[]) => void;
   quitar: (variante: Variante) => void;
   vaciar: () => void;
 }
@@ -33,26 +33,22 @@ export const useCarrito = create<Carrito>()(
   persist(
     (set) => ({
       items: [],
-      agregar: (nuevo) =>
+      reemplazarProducto: (productoId, nuevos) =>
         set(({ items }) => {
-          const existente = items.find((item) => mismaVariante(item, nuevo));
-          if (!existente) return { items: [...items, nuevo] };
-          const cantidad = Math.min(
-            CANTIDAD_MAXIMA,
-            existente.cantidad + nuevo.cantidad,
+          const lugar = items.findIndex(
+            (item) => item.productoId === productoId,
           );
+          const resto = items.filter((item) => item.productoId !== productoId);
+          // Si ya estaba, queda en el mismo lugar del pedido.
+          const posicion = lugar === -1 ? resto.length : lugar;
           return {
-            items: items.map((item) =>
-              item === existente ? { ...nuevo, cantidad } : item,
-            ),
+            items: [
+              ...resto.slice(0, posicion),
+              ...nuevos,
+              ...resto.slice(posicion),
+            ],
           };
         }),
-      cambiarCantidad: (variante, cantidad) =>
-        set(({ items }) => ({
-          items: items.map((item) =>
-            mismaVariante(item, variante) ? { ...item, cantidad } : item,
-          ),
-        })),
       quitar: (variante) =>
         set(({ items }) => ({
           items: items.filter((item) => !mismaVariante(item, variante)),
@@ -68,3 +64,26 @@ export const unidadesDe = (items: ItemCarrito[]) =>
 
 export const totalDe = (items: ItemCarrito[]) =>
   items.reduce((total, item) => total + item.precio * item.cantidad, 0);
+
+export interface ProductoEnCarrito {
+  productoId: string;
+  nombre: string;
+  precio: number;
+  miniatura: string | null;
+  items: ItemCarrito[];
+}
+
+// Las líneas de cada producto juntas, en el orden en que se agregaron.
+export function agruparPorProducto(items: ItemCarrito[]): ProductoEnCarrito[] {
+  const grupos = new Map<string, ProductoEnCarrito>();
+  for (const item of items) {
+    const grupo = grupos.get(item.productoId);
+    if (grupo) {
+      grupo.items.push(item);
+    } else {
+      const { productoId, nombre, precio, miniatura } = item;
+      grupos.set(productoId, { productoId, nombre, precio, miniatura, items: [item] });
+    }
+  }
+  return [...grupos.values()];
+}

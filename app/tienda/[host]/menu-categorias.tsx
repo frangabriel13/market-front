@@ -13,13 +13,19 @@ import {
 } from "@/components/ui/sheet";
 import type { CategoriaTienda } from "@/lib/schemas/tienda";
 import { cn } from "@/lib/utils";
+import { SOBRE_OSCURO } from "./estilos";
 import { rutaCategoria } from "./rutas";
 
 export function MenuCategorias({ categorias }: { categorias: CategoriaTienda[] }) {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label="Categorías">
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Categorías"
+          className={`${SOBRE_OSCURO} aria-expanded:bg-white/10 aria-expanded:text-background`}
+        >
           <Menu />
         </Button>
       </SheetTrigger>

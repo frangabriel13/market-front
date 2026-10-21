@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
-import { tituloDe, ubicarCategoria, type Ubicacion } from "../../categorias";
+import { tituloDe, ubicarCategoria } from "../../categorias";
+import { ChipsCategorias } from "../../chips-categorias";
 import { obtenerCategorias, obtenerProductos } from "../../datos";
 import { GrillaProductos, GrillaProductosCargando } from "../../grilla-productos";
+import { Migas } from "../../migas";
 import { rutaCategoria } from "../../rutas";
 
 type Props = PageProps<"/tienda/[host]/categoria/[slug]">;
@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default function CategoriaPage({ params }: Props) {
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 pt-6">
+    <div className="mx-auto w-full max-w-5xl px-4 pt-4">
       <Suspense fallback={<ListadoCargando />}>
         <Listado params={params} />
       </Suspense>
@@ -36,60 +36,36 @@ async function Listado({ params }: Pick<Props, "params">) {
   const ubicacion = ubicarCategoria(categorias, slug);
   if (!ubicacion) notFound();
 
-  return (
-    <>
-      <h1 className="text-xl font-bold tracking-wide uppercase">
-        {ubicacion.categoria.nombre}
-      </h1>
-      <Subcategorias {...ubicacion} />
-      <p className="mt-4 mb-3 text-sm text-muted-foreground">
-        {productos.length === 1 ? "1 producto" : `${productos.length} productos`}
-      </p>
-      <GrillaProductos productos={productos} />
-    </>
-  );
-}
+  const { categoria, subcategoria } = ubicacion;
+  // Con subcategorías se elige entre ellas; si no, se salta a otra categoría.
+  const chips = categoria.subcategorias.length
+    ? [{ slug: categoria.slug, nombre: "Todo" }, ...categoria.subcategorias]
+    : categorias;
 
-function Subcategorias({ categoria, subcategoria }: Ubicacion) {
-  if (categoria.subcategorias.length === 0) return null;
-  const opciones = [
-    { slug: categoria.slug, nombre: "Todo" },
-    ...categoria.subcategorias,
-  ];
-  const actual = subcategoria?.slug ?? categoria.slug;
   return (
-    <nav
-      aria-label="Subcategorías"
-      className="-mx-4 mt-3 overflow-x-auto px-4 [scrollbar-width:none]"
-    >
-      <ul className="flex gap-2">
-        {opciones.map(({ slug, nombre }) => (
-          <li key={slug}>
-            <Link
-              href={rutaCategoria(slug)}
-              aria-current={slug === actual ? "page" : undefined}
-              className={cn(
-                "block border px-3 py-1.5 text-sm whitespace-nowrap",
-                slug === actual
-                  ? "border-foreground bg-foreground font-bold text-background"
-                  : "border-border hover:border-foreground",
-              )}
-            >
-              {nombre}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </nav>
+    <div className="flex flex-col gap-4">
+      <Migas
+        migas={[
+          { href: "/", texto: "Inicio" },
+          { href: rutaCategoria(categoria.slug), texto: categoria.nombre },
+          ...(subcategoria
+            ? [{ href: rutaCategoria(subcategoria.slug), texto: subcategoria.nombre }]
+            : []),
+        ]}
+      />
+      <h1 className="titulo text-3xl">{(subcategoria ?? categoria).nombre}</h1>
+      <ChipsCategorias chips={chips} actual={slug} />
+      <GrillaProductos productos={productos} />
+    </div>
   );
 }
 
 function ListadoCargando() {
   return (
-    <>
-      <Skeleton className="h-7 w-40" />
-      <Skeleton className="mt-4 mb-3 h-4 w-24" />
+    <div className="flex flex-col gap-4">
+      <Skeleton className="h-4 w-32" />
+      <Skeleton className="h-8 w-48" />
       <GrillaProductosCargando />
-    </>
+    </div>
   );
 }

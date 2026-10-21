@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 
 export default function PedidoListoPage() {
   return (
-    <div className="mx-auto w-full max-w-md px-4 pt-10">
+    <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col px-4 pt-6">
       <PedidoListo />
     </div>
   );

@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { Mulish } from "next/font/google";
+import { Archivo } from "next/font/google";
 import "./globals.css";
 
-const mulish = Mulish({
-  variable: "--font-mulish",
+const archivo = Archivo({
+  variable: "--font-archivo",
   subsets: ["latin"],
 });
 
@@ -22,7 +22,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="es-AR" className={`${mulish.variable} h-full antialiased`}>
+    <html lang="es-AR" className={`${archivo.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">{children}</body>
     </html>
   );

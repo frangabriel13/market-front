@@ -1,18 +1,18 @@
 import type { ReactNode } from "react";
 import { BotonSalir } from "@/components/boton-salir";
+import { MarcaPlataforma } from "@/components/marca-plataforma";
 
-// Barra de arriba de /panel y /admin. `children`: pestañas, si hay.
+// Barra de arriba del panel de administración. `children`: pestañas.
 export function EncabezadoPanel({ children }: { children?: ReactNode }) {
   return (
-    <header className="border-b">
-      <div className="mx-auto flex h-14 w-full max-w-2xl items-center justify-between gap-4 px-4">
-        <p className="text-sm font-extrabold tracking-[0.2em] uppercase">
-          {process.env.PLATFORM_NAME}
-        </p>
-        <BotonSalir />
-      </div>
+    <header className="border-b bg-background">
+      <MarcaPlataforma>
+        <BotonSalir sobreOscuro />
+      </MarcaPlataforma>
       {children && (
-        <div className="mx-auto w-full max-w-2xl px-4">{children}</div>
+        <div className="mx-auto w-full max-w-2xl overflow-x-auto px-4 [scrollbar-width:none]">
+          {children}
+        </div>
       )}
     </header>
   );

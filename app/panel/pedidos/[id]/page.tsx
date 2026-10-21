@@ -5,13 +5,17 @@ import { Suspense } from "react";
 import { IconoWhatsapp } from "@/components/iconos-redes";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Volver } from "@/components/volver";
 import { ApiError } from "@/lib/api/server";
 import { apiFetchConSesion } from "@/lib/api/con-sesion";
-import { formatearFechaHora, formatearPrecio } from "@/lib/formato";
+import { formatearCuando, formatearPrecio } from "@/lib/formato";
 import type { Pedido } from "@/lib/schemas/pedidos";
 import { formatearTelefono } from "@/lib/schemas/telefono";
+import { EncabezadoPagina } from "../../encabezado-pagina";
 import { CambiarEstado } from "../cambiar-estado";
+import { numeroDePedido } from "../numero";
+
+const CUERPO = "mx-auto flex w-full max-w-2xl flex-col gap-3 px-4 py-4";
+const TARJETA = "border bg-background p-4";
 
 export const metadata: Metadata = {
   title: "Pedido",
@@ -21,12 +25,9 @@ export default function PedidoPage({
   params,
 }: PageProps<"/panel/pedidos/[id]">) {
   return (
-    <>
-      <Volver href="/panel/pedidos" texto="Pedidos" />
-      <Suspense fallback={<PedidoCargando />}>
-        <DetallePedido params={params} />
-      </Suspense>
-    </>
+    <Suspense fallback={<PedidoCargando />}>
+      <DetallePedido params={params} />
+    </Suspense>
   );
 }
 
@@ -53,15 +54,18 @@ async function DetallePedido({ params }: { params: Promise<{ id: string }> }) {
   ].filter(Boolean);
 
   return (
-    <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-bold">Pedido #{pedido.numero}</h1>
+    <>
+      <EncabezadoPagina
+        titulo={`Pedido ${numeroDePedido(pedido.numero)}`}
+        volver="/panel/pedidos"
+      />
+      <div className={CUERPO}>
         <p className="text-sm text-muted-foreground">
-          {formatearFechaHora(pedido.creadoEn)}
+          {formatearCuando(pedido.creadoEn)}
         </p>
-      </div>
-
-      <CambiarEstado pedidoId={pedido.id} estado={pedido.estado} />
+        <section className={TARJETA}>
+          <CambiarEstado pedidoId={pedido.id} estado={pedido.estado} />
+        </section>
 
       <Seccion titulo="Comprador">
         <Dato>{pedido.compradorNombre}</Dato>
@@ -79,7 +83,7 @@ async function DetallePedido({ params }: { params: Promise<{ id: string }> }) {
         {pedido.compradorCuit && (
           <Dato etiqueta="CUIT">{pedido.compradorCuit}</Dato>
         )}
-        <Button asChild className="mt-2 self-start">
+        <Button asChild variant="success" className="mt-2 self-start">
           <a href={whatsapp} target="_blank" rel="noopener noreferrer">
             <IconoWhatsapp />
             Escribirle por WhatsApp
@@ -130,8 +134,9 @@ async function DetallePedido({ params }: { params: Promise<{ id: string }> }) {
           <span>Total</span>
           <span className="text-lg">{formatearPrecio(pedido.total)}</span>
         </p>
-      </Seccion>
-    </div>
+        </Seccion>
+      </div>
+    </>
   );
 }
 
@@ -139,8 +144,10 @@ type ConHijos = { children: React.ReactNode };
 
 function Seccion({ titulo, children }: ConHijos & { titulo: string }) {
   return (
-    <section className="flex flex-col gap-1">
-      <h2 className="mb-1 text-sm font-bold uppercase">{titulo}</h2>
+    <section className={`flex flex-col gap-1 ${TARJETA}`}>
+      <h2 className="mb-1 text-sm font-bold tracking-wider uppercase">
+        {titulo}
+      </h2>
       {children}
     </section>
   );
@@ -157,11 +164,13 @@ function Dato({ etiqueta, children }: ConHijos & { etiqueta?: string }) {
 
 function PedidoCargando() {
   return (
-    <div className="flex flex-col gap-3" aria-busy="true">
-      <Skeleton className="h-7 w-40" />
-      <Skeleton className="h-4 w-28" />
-      <Skeleton className="h-9 w-full" />
-      <Skeleton className="h-24 w-full" />
-    </div>
+    <>
+      <EncabezadoPagina titulo="Pedido" volver="/panel/pedidos" />
+      <div className={CUERPO} aria-busy="true">
+        <Skeleton className="h-4 w-28" />
+        <Skeleton className="h-24 w-full rounded-none bg-background" />
+        <Skeleton className="h-40 w-full rounded-none bg-background" />
+      </div>
+    </>
   );
 }

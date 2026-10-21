@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function LegalesPage() {
   return (
     <>
-      <h1 className="text-2xl font-bold">Textos legales</h1>
+      <h1 className="text-2xl font-black">Textos legales</h1>
       <p className="mb-6 text-sm text-muted-foreground">
         Son los mismos para todas las tiendas. Aparecen en el pie de cada una.
       </p>

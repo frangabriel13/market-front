@@ -13,7 +13,7 @@ export default function AdminPage() {
   return (
     <>
       <div className="mb-4 flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold">Marcas</h1>
+        <h1 className="text-2xl font-black">Marcas</h1>
         <Button asChild>
           <Link href="/admin/marcas/nueva">
             <Plus />

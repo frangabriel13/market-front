@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function CategoriasPage() {
   return (
     <>
-      <h1 className="text-2xl font-bold">Categorías</h1>
+      <h1 className="text-2xl font-black">Categorías</h1>
       <p className="mb-4 text-sm text-muted-foreground">
         Son las mismas para todas las tiendas. Cada producto va en una sola.
       </p>

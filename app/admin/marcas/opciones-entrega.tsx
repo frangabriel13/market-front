@@ -41,7 +41,7 @@ export function OpcionesEntrega({ marcaId, opciones }: Props) {
   return (
     <section className="mb-8 flex flex-col gap-4">
       <div>
-        <h2 className="text-base font-medium">Opciones de entrega</h2>
+        <h2 className="text-sm font-bold tracking-wider uppercase">Opciones de entrega</h2>
         <p className="text-sm text-muted-foreground">
           Lo que elige el comprador al hacer el pedido. Con Envío también se le
           piden los datos para mandarlo.
