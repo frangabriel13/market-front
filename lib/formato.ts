@@ -21,3 +21,18 @@ const FECHA = new Intl.DateTimeFormat("es-AR", {
 export function formatearFecha(iso: string): string {
   return FECHA.format(new Date(iso));
 }
+
+const FECHA_HORA = new Intl.DateTimeFormat("es-AR", {
+  day: "2-digit",
+  month: "2-digit",
+  year: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  hourCycle: "h23",
+  timeZone: "America/Argentina/Buenos_Aires",
+});
+
+// "2026-10-20T18:04:00.000Z" → "20/10/26, 15:04"
+export function formatearFechaHora(iso: string): string {
+  return FECHA_HORA.format(new Date(iso));
+}

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { MarcaTienda } from "@/lib/schemas/tienda";
 import { BarraCategorias } from "./barra-categorias";
+import { BotonCarrito } from "./boton-carrito";
 import { obtenerCategorias, obtenerMarca } from "./datos";
 import { MenuCategorias } from "./menu-categorias";
 
@@ -25,6 +26,7 @@ export async function Encabezado({ params }: { params: Promise<{ host: string }>
         <Link href="/" className="justify-self-center">
           <Logo marca={marca} />
         </Link>
+        <BotonCarrito />
       </div>
       {categorias.length > 0 && <BarraCategorias categorias={categorias} />}
     </header>

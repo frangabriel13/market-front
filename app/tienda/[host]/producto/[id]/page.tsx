@@ -56,6 +56,12 @@ async function DetalleProducto({ params }: Pick<Props, "params">) {
         </div>
         {producto.variantes.length > 0 && (
           <ElegirVariante
+            producto={{
+              productoId: producto.id,
+              nombre: producto.nombre,
+              precio: producto.precio,
+              miniatura: producto.fotos[0]?.urlMiniatura ?? null,
+            }}
             variantes={producto.variantes}
             guiaTallesUrl={marca.guiaTallesUrl}
           />

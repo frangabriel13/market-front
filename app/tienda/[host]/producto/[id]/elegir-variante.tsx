@@ -1,14 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
+import { useLayoutEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { useCarrito, type ItemCarrito } from "@/lib/carrito";
 import type { VarianteProducto } from "@/lib/schemas/productos";
 import { cn } from "@/lib/utils";
+import { RUTA_CARRITO } from "../../rutas";
+import { SelectorCantidad } from "../../selector-cantidad";
 import { GuiaTalles } from "./guia-talles";
 
-type Props = { variantes: VarianteProducto[]; guiaTallesUrl: string | null };
+type Props = {
+  producto: Omit<ItemCarrito, "color" | "talle" | "cantidad">;
+  variantes: VarianteProducto[];
+  guiaTallesUrl: string | null;
+};
 
 // Las variantes llegan en el orden de las listas de la marca.
-export function ElegirVariante({ variantes, guiaTallesUrl }: Props) {
+export function ElegirVariante({ producto, variantes, guiaTallesUrl }: Props) {
   const colores = [...new Set(variantes.map((v) => v.color))];
   const talles = [...new Set(variantes.map((v) => v.talle))];
   const hay = (color: string, talle: string) =>
@@ -17,6 +26,25 @@ export function ElegirVariante({ variantes, guiaTallesUrl }: Props) {
 
   const [color, setColor] = useState(() => colores.find(colorConStock) ?? null);
   const [talle, setTalle] = useState<string | null>(null);
+  const [cantidad, setCantidad] = useState(1);
+  const [agregado, setAgregado] = useState<string | null>(null);
+  const agregar = useCarrito((carrito) => carrito.agregar);
+
+  // Next oculta la página al salir sin desmontarla: el aviso no queda al volver.
+  useLayoutEffect(() => () => setAgregado(null), []);
+
+  function elegir(cambio: () => void) {
+    cambio();
+    setAgregado(null);
+  }
+
+  function agregarAlPedido() {
+    if (!color || !talle) return;
+    agregar({ ...producto, color, talle, cantidad });
+    setAgregado(
+      `Agregaste ${cantidad} ${cantidad === 1 ? "unidad" : "unidades"} (${color} / ${talle}).`,
+    );
+  }
 
   return (
     <div className="flex flex-col gap-5">
@@ -27,10 +55,12 @@ export function ElegirVariante({ variantes, guiaTallesUrl }: Props) {
             texto={c}
             elegida={c === color}
             agotada={!colorConStock(c)}
-            onClick={() => {
-              setColor(c);
-              if (talle && !hay(c, talle)) setTalle(null);
-            }}
+            onClick={() =>
+              elegir(() => {
+                setColor(c);
+                if (talle && !hay(c, talle)) setTalle(null);
+              })
+            }
           />
         ))}
       </Grupo>
@@ -45,10 +75,30 @@ export function ElegirVariante({ variantes, guiaTallesUrl }: Props) {
             texto={t}
             elegida={t === talle}
             agotada={!color || !hay(color, t)}
-            onClick={() => setTalle(t)}
+            onClick={() => elegir(() => setTalle(t))}
           />
         ))}
       </Grupo>
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-bold">Cantidad</p>
+        <SelectorCantidad
+          valor={cantidad}
+          onChange={(nueva) => elegir(() => setCantidad(nueva))}
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <Button size="lg" disabled={!color || !talle} onClick={agregarAlPedido}>
+          {!color ? "Agotado" : !talle ? "Elegí un talle" : "Agregar al pedido"}
+        </Button>
+        {agregado && (
+          <p role="status" className="text-sm text-success">
+            {agregado}{" "}
+            <Link href={RUTA_CARRITO} className="font-bold underline">
+              Ver pedido
+            </Link>
+          </p>
+        )}
+      </div>
     </div>
   );
 }
