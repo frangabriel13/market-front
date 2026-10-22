@@ -23,7 +23,7 @@ const IMAGENES: {
     tipo: "logo",
     campo: "logoUrl",
     titulo: "Logo",
-    descripcion: "PNG con fondo transparente. En la tienda se ve en blanco sobre el encabezado oscuro.",
+    descripcion: "Se muestra tal cual sobre el encabezado oscuro. Mejor en PNG con fondo transparente.",
     marco: "aspect-square",
   },
   {

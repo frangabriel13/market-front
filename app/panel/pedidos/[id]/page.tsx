@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ApiError } from "@/lib/api/server";
 import { apiFetchConSesion } from "@/lib/api/con-sesion";
 import { formatearCuando, formatearPrecio } from "@/lib/formato";
-import type { Pedido } from "@/lib/schemas/pedidos";
+import { ETIQUETAS_FORMA_PAGO, type Pedido } from "@/lib/schemas/pedidos";
 import { formatearTelefono } from "@/lib/schemas/telefono";
 import { EncabezadoPagina } from "../../encabezado-pagina";
 import { CambiarEstado } from "../cambiar-estado";
@@ -91,11 +91,15 @@ async function DetallePedido({ params }: { params: Promise<{ id: string }> }) {
         </Button>
       </Seccion>
 
-      <Seccion titulo="Entrega">
+      <Seccion titulo="Entrega y pago">
+        <Dato etiqueta="Pago">{ETIQUETAS_FORMA_PAGO[pedido.formaPago]}</Dato>
         <Dato>{pedido.entrega}</Dato>
         {envio.map((linea) => (
           <Dato key={linea}>{linea}</Dato>
         ))}
+        {pedido.codigoPostal && (
+          <Dato etiqueta="Código postal">{pedido.codigoPostal}</Dato>
+        )}
         {pedido.transporte && (
           <Dato etiqueta="Transporte">{pedido.transporte}</Dato>
         )}

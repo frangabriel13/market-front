@@ -5,8 +5,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { unstable_rethrow, useRouter } from "next/navigation";
 import { useLayoutEffect, useState } from "react";
-import { Controller, useForm, useWatch, type Control } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { CampoLista } from "@/components/form/campo-lista";
+import { CampoOpciones } from "@/components/form/campo-opciones";
 import { CampoTexto } from "@/components/form/campo-texto";
 import { IconoWhatsapp } from "@/components/iconos-redes";
 import { ErrorFormulario } from "@/components/form/error-formulario";
@@ -25,17 +26,22 @@ import { guardarPedidoArmado } from "@/lib/pedido-armado";
 import { PROVINCIAS } from "@/lib/provincias";
 import { ETIQUETAS_TIPO_ENTREGA } from "@/lib/schemas/opciones-entrega";
 import {
+  ETIQUETAS_FORMA_PAGO,
+  FORMAS_PAGO,
   pedidoCrearSchema,
   type PedidoCrear,
   type PedidoCrearInput,
 } from "@/lib/schemas/pedidos";
 import type { MarcaTienda } from "@/lib/schemas/tienda";
-import { cn } from "@/lib/utils";
 import { RUTA_CARRITO, RUTA_PEDIDO_LISTO } from "../rutas";
 import { crearPedido } from "./acciones";
 
 type Props = { marca: MarcaTienda };
 
+const OPCIONES_PAGO = FORMAS_PAGO.map((forma) => ({
+  valor: forma,
+  titulo: ETIQUETAS_FORMA_PAGO[forma],
+}));
 
 export function DatosPedido({ marca }: Props) {
   const items = useCarrito((carrito) => carrito.items);
@@ -170,10 +176,15 @@ function FormularioPedido({
       }}
       className="flex flex-col gap-8"
     >
-      <ElegirEntrega
+      <CampoOpciones
         control={form.control}
-        marca={marca}
-        onTipo={(tipo) => form.setValue("tipoEntrega", tipo)}
+        name="opcionEntregaId"
+        titulo="Entrega"
+        opciones={opcionesEntrega(marca)}
+        onElegir={(id) => {
+          const opcion = marca.opcionesEntrega.find((o) => o.id === id);
+          if (opcion) form.setValue("tipoEntrega", opcion.tipo);
+        }}
       />
 
       <section className="flex flex-col gap-4">
@@ -201,12 +212,11 @@ function FormularioPedido({
           <h2 className="text-sm font-bold tracking-wider uppercase">
             Datos para el envío
           </h2>
-          {/* TODO(decision): DNI y CUIT opcionales en envío; el DNI pasa a obligatorio en la 5.14. */}
           <div className="grid grid-cols-2 gap-3">
             <CampoTexto
               control={form.control}
               name="dni"
-              label="DNI (opcional)"
+              label="DNI"
               inputMode="numeric"
             />
             <CampoTexto
@@ -224,7 +234,7 @@ function FormularioPedido({
             autoComplete="street-address"
             maxLength={200}
           />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-[1fr_7.5rem] gap-3">
             <CampoTexto
               control={form.control}
               name="localidad"
@@ -232,15 +242,22 @@ function FormularioPedido({
               autoComplete="address-level2"
               maxLength={100}
             />
-            <CampoLista
+            <CampoTexto
               control={form.control}
-              name="provincia"
-              label="Provincia"
-              placeholder="Elegí"
-              opciones={PROVINCIAS}
-              autoComplete="address-level1"
+              name="codigoPostal"
+              label="Código postal"
+              autoComplete="postal-code"
+              maxLength={10}
             />
           </div>
+          <CampoLista
+            control={form.control}
+            name="provincia"
+            label="Provincia"
+            placeholder="Elegí la provincia"
+            opciones={PROVINCIAS}
+            autoComplete="address-level1"
+          />
           <CampoTexto
             control={form.control}
             name="transporte"
@@ -257,6 +274,15 @@ function FormularioPedido({
           />
         </section>
       )}
+
+      <CampoOpciones
+        control={form.control}
+        name="formaPago"
+        titulo="Forma de pago"
+        descripcion="No pagás ahora: lo coordinás por WhatsApp con la marca."
+        opciones={OPCIONES_PAGO}
+        className="grid grid-cols-2"
+      />
 
       <div className="flex flex-col gap-3">
         {sinStock.length > 0 ? (
@@ -314,62 +340,16 @@ function FormularioPedido({
   );
 }
 
-function ElegirEntrega({
-  control,
-  marca,
-  onTipo,
-}: Props & {
-  control: Control<PedidoCrearInput, unknown, PedidoCrear>;
-  onTipo: (tipo: PedidoCrearInput["tipoEntrega"]) => void;
-}) {
+function opcionesEntrega(marca: MarcaTienda) {
   const retiro = [marca.direccionRetiro, marca.horariosRetiro]
     .filter(Boolean)
     .join(" · ");
-  return (
-    <Controller
-      control={control}
-      name="opcionEntregaId"
-      render={({ field, fieldState }) => (
-        <fieldset className="flex flex-col gap-2">
-          <legend className="mb-2 text-sm font-bold tracking-wider uppercase">
-            Entrega
-          </legend>
-          {marca.opcionesEntrega.map((opcion) => (
-            <label
-              key={opcion.id}
-              className={cn(
-                "flex cursor-pointer items-start gap-3 border p-3 text-sm",
-                field.value === opcion.id
-                  ? "border-2 border-foreground"
-                  : "border-input",
-              )}
-            >
-              <input
-                type="radio"
-                name={field.name}
-                value={opcion.id}
-                checked={field.value === opcion.id}
-                onChange={() => {
-                  field.onChange(opcion.id);
-                  onTipo(opcion.tipo);
-                }}
-                className="mt-0.5 accent-foreground"
-              />
-              <span className="flex flex-col gap-0.5">
-                <span className="font-bold">{opcion.nombre}</span>
-                <span className="text-muted-foreground">
-                  {opcion.tipo === "RETIRO" && retiro
-                    ? retiro
-                    : ETIQUETAS_TIPO_ENTREGA[opcion.tipo]}
-                </span>
-              </span>
-            </label>
-          ))}
-          {fieldState.error && (
-            <p className="text-sm text-destructive">{fieldState.error.message}</p>
-          )}
-        </fieldset>
-      )}
-    />
-  );
+  return marca.opcionesEntrega.map((opcion) => ({
+    valor: opcion.id,
+    titulo: opcion.nombre,
+    detalle:
+      opcion.tipo === "RETIRO" && retiro
+        ? retiro
+        : ETIQUETAS_TIPO_ENTREGA[opcion.tipo],
+  }));
 }

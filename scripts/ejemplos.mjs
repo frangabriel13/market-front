@@ -100,7 +100,14 @@ for (const [producto, tipo] of [[primero, "RETIRO"], [segundo, "ENVIO"]]) {
       tipoEntrega: tipo,
       nombre: tipo === "RETIRO" ? "Juan Pérez" : "Ana Gómez",
       telefono: "11 5555-5555",
-      ...(tipo === "ENVIO" && { direccion: "San Martín 123", localidad: "Rosario", provincia: "Santa Fe" }),
+      formaPago: tipo === "RETIRO" ? "EFECTIVO" : "TRANSFERENCIA",
+      ...(tipo === "ENVIO" && {
+        dni: "30123456",
+        direccion: "San Martín 123",
+        localidad: "Rosario",
+        provincia: "Santa Fe",
+        codigoPostal: "2000",
+      }),
     },
   });
   console.log(`Pedido #${numero} (${opcion.nombre})`);

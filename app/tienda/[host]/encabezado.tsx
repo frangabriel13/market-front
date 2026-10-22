@@ -53,7 +53,6 @@ function Logo({ marca }: { marca: MarcaTienda }) {
       </span>
     );
   }
-  // En blanco sobre el fondo oscuro, sea cual sea el color del logo.
   return (
     <span className="relative block h-9 w-40">
       <Image
@@ -62,7 +61,7 @@ function Logo({ marca }: { marca: MarcaTienda }) {
         fill
         unoptimized
         priority
-        className="object-contain brightness-0 invert"
+        className="object-contain"
       />
     </span>
   );

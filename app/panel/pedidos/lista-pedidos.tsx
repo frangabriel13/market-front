@@ -94,8 +94,15 @@ function TarjetaPedido({ pedido }: { pedido: Tarjeta }) {
       </div>
       <p className="text-sm text-muted-foreground">{pedido.cuando}</p>
       <p className="truncate">{pedido.compradorNombre}</p>
-      <p className="font-bold">{formatearPrecio(pedido.total)}</p>
-      <p className="text-sm text-muted-foreground">{pedido.entrega}</p>
+      <p className="font-bold">
+        {formatearPrecio(pedido.total)}{" "}
+        <span className="font-normal text-muted-foreground">
+          · {pedido.unidades} {pedido.unidades === 1 ? "unidad" : "unidades"}
+        </span>
+      </p>
+      <p className="text-sm text-muted-foreground">
+        {[pedido.entrega, pedido.localidad].filter(Boolean).join(" · ")}
+      </p>
       <Link
         href={`/panel/pedidos/${pedido.id}`}
         className="mt-2 self-start text-sm font-bold underline underline-offset-4"
