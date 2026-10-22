@@ -43,6 +43,7 @@ export async function ListaProductos() {
               <p className="truncate text-sm">
                 {formatearPrecio(producto.precio)} · {producto.categoria.nombre}
               </p>
+              <Disponibilidad producto={producto} />
               {!producto.visible && (
                 <p className="text-sm">Oculto: no se ve en la tienda</p>
               )}
@@ -56,6 +57,26 @@ export async function ListaProductos() {
         </li>
       ))}
     </ul>
+  );
+}
+
+function Disponibilidad({
+  producto: { combinaciones, agotadas },
+}: {
+  producto: ProductoResumen;
+}) {
+  if (combinaciones === 0) {
+    return <p className="text-sm text-destructive">Sin colores ni talles</p>;
+  }
+  if (agotadas === combinaciones) {
+    return <p className="text-sm font-bold text-destructive">Todo agotado</p>;
+  }
+  return (
+    <p className="text-sm text-muted-foreground">
+      {combinaciones} {combinaciones === 1 ? "combinación" : "combinaciones"}
+      {agotadas > 0 &&
+        ` · ${agotadas} ${agotadas === 1 ? "agotada" : "agotadas"}`}
+    </p>
   );
 }
 
