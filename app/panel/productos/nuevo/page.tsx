@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { AvisoListas, sinListas } from "../../aviso-listas";
 import { EncabezadoPagina } from "../../encabezado-pagina";
-import { obtenerCategorias, obtenerMarca } from "../datos";
+import { obtenerCategorias, obtenerListas } from "../datos";
 import { FormularioCargando } from "../formulario-cargando";
 import { ProductoForm } from "../producto-form";
 
@@ -25,9 +26,14 @@ export default function NuevoProductoPage() {
 }
 
 async function Formulario() {
-  const [categorias, marca] = await Promise.all([
+  const [categorias, listas] = await Promise.all([
     obtenerCategorias(),
-    obtenerMarca(),
+    obtenerListas(),
   ]);
-  return <ProductoForm categorias={categorias} marca={marca} />;
+  return (
+    <div className="flex flex-col gap-5">
+      {sinListas(listas) && <AvisoListas />}
+      <ProductoForm categorias={categorias} listas={listas} />
+    </div>
+  );
 }

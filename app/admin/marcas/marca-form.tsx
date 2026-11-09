@@ -7,14 +7,10 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Controller, useForm, useWatch, type Path } from "react-hook-form";
 import { CampoPesos } from "@/components/form/campo-pesos";
 import { CampoTexto } from "@/components/form/campo-texto";
-import { ListaEditable } from "@/components/form/lista-editable";
 import { Button } from "@/components/ui/button";
 import {
-  Field,
   FieldDescription,
-  FieldError,
   FieldGroup,
-  FieldLabel,
   FieldLegend,
   FieldSet,
 } from "@/components/ui/field";
@@ -54,8 +50,6 @@ function valoresIniciales(marca?: Marca): MarcaCrearInput {
       facebook: marca?.redes.facebook ?? "",
       tiktok: marca?.redes.tiktok ?? "",
     },
-    colores: marca?.colores ?? [],
-    talles: marca?.talles ?? [],
   };
 }
 
@@ -245,39 +239,6 @@ export function MarcaForm({ marca, dominio }: Props) {
               type="url"
               autoCapitalize="none"
               placeholder={placeholder}
-            />
-          ))}
-        </FieldGroup>
-      </FieldSet>
-
-      <FieldSet>
-        <FieldLegend>Colores y talles</FieldLegend>
-        <FieldDescription>
-          El fabricante elige de estas listas al cargar cada producto. Los talles
-          se muestran en el orden en que los agregues.
-        </FieldDescription>
-        <FieldGroup>
-          {(["colores", "talles"] as const).map((nombre) => (
-            <Controller
-              key={nombre}
-              control={control}
-              name={nombre}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor={nombre}>
-                    {nombre === "colores" ? "Colores" : "Talles"}
-                  </FieldLabel>
-                  <ListaEditable
-                    id={nombre}
-                    value={field.value ?? []}
-                    onChange={field.onChange}
-                    maxLength={30}
-                    placeholder={nombre === "colores" ? "Ej. Negro" : "Ej. M"}
-                    invalid={fieldState.invalid}
-                  />
-                  <FieldError errors={[fieldState.error]} />
-                </Field>
-              )}
             />
           ))}
         </FieldGroup>
