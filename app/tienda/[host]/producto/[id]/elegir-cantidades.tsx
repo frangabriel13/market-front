@@ -8,8 +8,9 @@ import { Button } from "@/components/ui/button";
 import { useHidratado } from "@/hooks/use-hidratado";
 import { CANTIDAD_MAXIMA, useCarrito, type ItemCarrito } from "@/lib/carrito";
 import { formatearPrecio } from "@/lib/formato";
-import type { VarianteProducto } from "@/lib/schemas/productos";
+import { SIN_VALOR, type VarianteProducto } from "@/lib/schemas/productos";
 import { cn } from "@/lib/utils";
+import { descripcionVariante } from "@/lib/variantes";
 import { RUTA_CARRITO } from "../../rutas";
 
 type Props = {
@@ -21,11 +22,21 @@ const clave = (color: string, talle: string) => `${color}\u0000${talle}`;
 
 const unidades = (n: number) => `${n} ${n === 1 ? "unidad" : "unidades"}`;
 
+function titulo(conColores: boolean, conTalles: boolean) {
+  if (conColores && conTalles) return "Elegí cantidades por color y talle";
+  if (conColores) return "Elegí cantidades por color";
+  if (conTalles) return "Elegí cantidades por talle";
+  return "Elegí la cantidad";
+}
+
 // La grilla muestra lo que ya hay en el pedido de este producto; al guardar,
 // lo reemplaza. Las variantes llegan en el orden de las listas de la marca.
+// Sin colores o sin talles, llevan SIN_VALOR y esa parte no se muestra.
 export function ElegirCantidades({ producto, variantes }: Props) {
   const colores = [...new Set(variantes.map((v) => v.color))];
   const talles = [...new Set(variantes.map((v) => v.talle))];
+  const conColores = colores.some((color) => color !== SIN_VALOR);
+  const conTalles = talles.some((talle) => talle !== SIN_VALOR);
   const hay = (color: string, talle: string) =>
     variantes.some((v) => v.color === color && v.talle === talle && v.disponible);
 
@@ -97,7 +108,9 @@ export function ElegirCantidades({ producto, variantes }: Props) {
   if (!colores.some((color) => talles.some((talle) => hay(color, talle)))) {
     return (
       <p className="bg-muted p-3 text-sm">
-        Este producto está agotado en todos sus colores y talles.
+        {conColores || conTalles
+          ? "Este producto está agotado en todos sus colores y talles."
+          : "Este producto está agotado."}
       </p>
     );
   }
@@ -105,31 +118,41 @@ export function ElegirCantidades({ producto, variantes }: Props) {
   return (
     <section className="flex flex-col gap-3">
       <h2 className="text-sm font-bold tracking-wider uppercase">
-        Elegí cantidades por color y talle
+        {titulo(conColores, conTalles)}
       </h2>
       <div className="-mx-4 overflow-x-auto px-3">
         <table className="w-full border-separate border-spacing-1.5">
-          <thead>
-            <tr>
-              <td />
-              {talles.map((talle) => (
-                <th key={talle} scope="col" className="text-sm font-bold">
-                  {talle}
-                </th>
-              ))}
-            </tr>
-          </thead>
+          {conTalles && (
+            <thead>
+              <tr>
+                {conColores && <td />}
+                {talles.map((talle) => (
+                  <th key={talle} scope="col" className="text-sm font-bold">
+                    {talle}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+          )}
           <tbody>
             {colores.map((color) => (
               <tr key={color}>
-                <th scope="row" className="pr-1 text-left text-sm font-semibold">
-                  {color}
-                </th>
+                {conColores && (
+                  <th
+                    scope="row"
+                    className="pr-1 text-left text-sm font-semibold"
+                  >
+                    {color}
+                  </th>
+                )}
                 {talles.map((talle) => (
                   <td key={talle}>
                     {hay(color, talle) ? (
                       <Casillero
-                        etiqueta={`${color} ${talle}`}
+                        etiqueta={
+                          descripcionVariante({ color, talle }) ||
+                          producto.nombre
+                        }
                         cantidad={cantidad(color, talle)}
                         onSumar={() => cambiar(color, talle, 1)}
                         onRestar={() => cambiar(color, talle, -1)}

@@ -10,6 +10,7 @@ import { apiFetchConSesion } from "@/lib/api/con-sesion";
 import { formatearCuando, formatearPrecio } from "@/lib/formato";
 import { ETIQUETAS_FORMA_PAGO, type Pedido } from "@/lib/schemas/pedidos";
 import { formatearTelefono } from "@/lib/schemas/telefono";
+import { descripcionVariante } from "@/lib/variantes";
 import { EncabezadoPagina } from "../../encabezado-pagina";
 import { CambiarEstado } from "../cambiar-estado";
 import { numeroDePedido } from "../numero";
@@ -124,8 +125,12 @@ async function DetallePedido({ params }: { params: Promise<{ id: string }> }) {
                   <p className="font-semibold">{item.nombreProducto}</p>
                 )}
                 <p className="text-muted-foreground">
-                  {item.color} / {item.talle} · {item.cantidad} ×{" "}
-                  {formatearPrecio(item.precioUnitario)}
+                  {[
+                    descripcionVariante(item),
+                    `${item.cantidad} × ${formatearPrecio(item.precioUnitario)}`,
+                  ]
+                    .filter(Boolean)
+                    .join(" · ")}
                 </p>
               </div>
               <p className="shrink-0 font-bold">

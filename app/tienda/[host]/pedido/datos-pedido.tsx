@@ -33,6 +33,7 @@ import {
   type PedidoCrearInput,
 } from "@/lib/schemas/pedidos";
 import type { MarcaTienda } from "@/lib/schemas/tienda";
+import { descripcionVariante } from "@/lib/variantes";
 import { RUTA_CARRITO, RUTA_PEDIDO_LISTO } from "../rutas";
 import { crearPedido } from "./acciones";
 
@@ -294,7 +295,9 @@ function FormularioPedido({
             <ul className="list-inside list-disc">
               {sinStock.map((item) => (
                 <li key={`${item.productoId}|${item.color}|${item.talle}`}>
-                  {item.nombre} ({item.color} / {item.talle})
+                  {item.nombre}
+                  {descripcionVariante(item) &&
+                    ` (${descripcionVariante(item)})`}
                 </li>
               ))}
             </ul>

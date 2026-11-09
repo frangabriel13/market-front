@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatearPrecio } from "@/lib/formato";
-import { obtenerMarca, obtenerProducto } from "../../datos";
+import { SIN_VALOR } from "@/lib/schemas/productos";
+import { obtenerProducto } from "../../datos";
 import { Migas } from "../../migas";
 import { rutaCategoria, rutaProducto } from "../../rutas";
 import { ElegirCantidades } from "./elegir-cantidades";
@@ -28,10 +29,7 @@ const COLUMNAS = "md:grid md:grid-cols-2 md:gap-8 md:px-4";
 
 async function DetalleProducto({ params }: Pick<Props, "params">) {
   const { host, id } = await params;
-  const [producto, marca] = await Promise.all([
-    obtenerProducto(host, id),
-    obtenerMarca(host),
-  ]);
+  const producto = await obtenerProducto(host, id);
   return (
     <article className="mx-auto w-full max-w-5xl">
       <div className="px-4 py-3">
@@ -85,8 +83,9 @@ async function DetalleProducto({ params }: Pick<Props, "params">) {
                 </p>
               </section>
             )}
-            {marca.guiaTallesUrl && producto.variantes.length > 0 && (
-              <GuiaTalles url={marca.guiaTallesUrl} />
+            {producto.guiaTallesUrl &&
+              producto.variantes.some((v) => v.talle !== SIN_VALOR) && (
+              <GuiaTalles url={producto.guiaTallesUrl} />
             )}
           </div>
         </div>

@@ -1,22 +1,40 @@
 "use client";
 
-import type { MarcaPanel } from "@/lib/schemas/marcas";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { alternar, clave, type Matriz } from "./matriz";
+import { descripcionVariante } from "@/lib/variantes";
+import { RUTA_LISTAS } from "../aviso-listas";
+import {
+  alternar,
+  clave,
+  esFijo,
+  type Matriz,
+  type ValoresDisponibles,
+} from "./matriz";
 
 type Props = {
-  marca: Pick<MarcaPanel, "colores" | "talles">;
+  valores: ValoresDisponibles;
   matriz: Matriz;
   onCambiar: (matriz: Matriz) => void;
 };
 
-// Colores y talles salen de las listas de la marca (las carga el administrador).
-export function EditorDisponibilidad({ marca, matriz, onCambiar }: Props) {
-  if (marca.colores.length === 0 || marca.talles.length === 0) {
+// Colores y talles salen de las listas del fabricante. Lo que el producto no
+// tiene (sin colores o sin talles) no se muestra.
+export function EditorDisponibilidad({ valores, matriz, onCambiar }: Props) {
+  const conColores = !esFijo(valores.colores);
+  const conTalles = !esFijo(valores.talles);
+  if (valores.colores.length === 0 || valores.talles.length === 0) {
     return (
       <p className="bg-muted p-3 text-sm text-muted-foreground">
-        Tu marca todavía no tiene colores y talles cargados. Pedíselos al
-        administrador.
+        {valores.colores.length === 0
+          ? "Tu marca todavía no tiene colores cargados."
+          : "Esta lista todavía no tiene talles."}{" "}
+        <Link
+          href={RUTA_LISTAS}
+          className="font-semibold text-foreground underline underline-offset-4"
+        >
+          Cargalos en Colores y talles
+        </Link>
       </p>
     );
   }
@@ -33,55 +51,65 @@ export function EditorDisponibilidad({ marca, matriz, onCambiar }: Props) {
 
   return (
     <>
-      <Opciones
-        titulo="Colores"
-        opciones={marca.colores}
-        elegidas={matriz.colores}
-        onAlternar={(color) =>
-          onCambiar({
-            ...matriz,
-            colores: alternar(matriz.colores, color, marca.colores),
-          })
-        }
-      />
-      <Opciones
-        titulo="Talles"
-        opciones={marca.talles}
-        elegidas={matriz.talles}
-        onAlternar={(talle) =>
-          onCambiar({
-            ...matriz,
-            talles: alternar(matriz.talles, talle, marca.talles),
-          })
-        }
-      />
+      {conColores && (
+        <Opciones
+          titulo="Colores"
+          opciones={valores.colores}
+          elegidas={matriz.colores}
+          onAlternar={(color) =>
+            onCambiar({
+              ...matriz,
+              colores: alternar(matriz.colores, color, valores.colores),
+            })
+          }
+        />
+      )}
+      {conTalles && (
+        <Opciones
+          titulo="Talles"
+          opciones={valores.talles}
+          elegidas={matriz.talles}
+          onAlternar={(talle) =>
+            onCambiar({
+              ...matriz,
+              talles: alternar(matriz.talles, talle, valores.talles),
+            })
+          }
+        />
+      )}
       {matriz.colores.length > 0 && matriz.talles.length > 0 && (
         <div className="flex flex-col gap-1">
           <p className="text-sm font-semibold">¿Qué hay disponible?</p>
           <p className="text-sm text-muted-foreground">
-            Tocá un casillero para marcarlo como agotado o disponible.
+            {conColores || conTalles
+              ? "Tocá un casillero para marcarlo como agotado o disponible."
+              : "Tocalo para marcar el producto como agotado o disponible."}
           </p>
           <div className="-mx-4 overflow-x-auto px-3">
             <table className="w-full border-separate border-spacing-1.5">
-              <thead>
-                <tr>
-                  <td />
-                  {matriz.talles.map((talle) => (
-                    <th key={talle} scope="col" className="text-sm font-bold">
-                      {talle}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
+              {conTalles && (
+                <thead>
+                  <tr>
+                    {conColores && <td />}
+                    {matriz.talles.map((talle) => (
+                      <th key={talle} scope="col" className="text-sm font-bold">
+                        {talle}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+              )}
               <tbody>
                 {matriz.colores.map((color) => (
                   <tr key={color}>
-                    <th
-                      scope="row"
-                      className="pr-1 text-left text-sm font-semibold"
-                    >
-                      {color}
-                    </th>
+                    {conColores && (
+                      <th
+                        scope="row"
+                        className="pr-1 text-left text-sm font-semibold"
+                      >
+                        {color}
+                      </th>
+                    )}
                     {matriz.talles.map((talle) => {
                       const k = clave(color, talle);
                       const hay = !matriz.agotadas.includes(k);
@@ -90,7 +118,7 @@ export function EditorDisponibilidad({ marca, matriz, onCambiar }: Props) {
                           <button
                             type="button"
                             aria-pressed={hay}
-                            aria-label={`${color} ${talle}: ${hay ? "hay" : "agotado"}`}
+                            aria-label={`${descripcionVariante({ color, talle }) || "Producto"}: ${hay ? "hay" : "agotado"}`}
                             onClick={() => alternarAgotada(color, talle)}
                             className={cn(
                               "flex h-12 w-full min-w-14 items-center justify-center rounded-md text-[10px] font-bold uppercase",

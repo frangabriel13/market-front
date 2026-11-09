@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ApiError } from "@/lib/api/error";
 import { apiFetchConSesion } from "@/lib/api/con-sesion";
 import type { CategoriaConSubcategorias } from "@/lib/schemas/categorias";
+import type { ListasPanel } from "@/lib/schemas/listas";
 import type { MarcaPanel } from "@/lib/schemas/marcas";
 import type { Producto } from "@/lib/schemas/productos";
 
@@ -12,6 +13,10 @@ export function obtenerCategorias(): Promise<CategoriaConSubcategorias[]> {
 
 export function obtenerMarca(): Promise<MarcaPanel> {
   return apiFetchConSesion("panel/marca");
+}
+
+export function obtenerListas(): Promise<ListasPanel> {
+  return apiFetchConSesion("panel/listas");
 }
 
 export async function obtenerProducto(id: string): Promise<Producto> {

@@ -8,20 +8,34 @@ import {
 } from "react-hook-form";
 import { cn } from "@/lib/utils";
 
-export type Opcion = { valor: string; titulo: string; detalle?: string };
+type Valor = string | boolean | null;
 
-type Props<T extends FieldValues, TOut extends FieldValues> = {
+export type Opcion<V extends Valor = string> = {
+  valor: V;
+  titulo: string;
+  detalle?: string;
+};
+
+type Props<
+  T extends FieldValues,
+  TOut extends FieldValues,
+  V extends Valor,
+> = {
   control: Control<T, unknown, TOut>;
   name: Path<T>;
   titulo: string;
   descripcion?: string;
-  opciones: Opcion[];
-  onElegir?: (valor: string) => void;
+  opciones: Opcion<V>[];
+  onElegir?: (valor: V) => void;
   className?: string;
 };
 
 // Tarjetas con radio: todas las opciones a la vista, sin abrir un selector.
-export function CampoOpciones<T extends FieldValues, TOut extends FieldValues>({
+export function CampoOpciones<
+  T extends FieldValues,
+  TOut extends FieldValues,
+  V extends Valor = string,
+>({
   control,
   name,
   titulo,
@@ -29,7 +43,7 @@ export function CampoOpciones<T extends FieldValues, TOut extends FieldValues>({
   opciones,
   onElegir,
   className,
-}: Props<T, TOut>) {
+}: Props<T, TOut, V>) {
   return (
     <Controller
       control={control}
@@ -47,7 +61,7 @@ export function CampoOpciones<T extends FieldValues, TOut extends FieldValues>({
           <div className={cn("flex flex-col gap-2", className)}>
             {opciones.map((opcion) => (
               <label
-                key={opcion.valor}
+                key={String(opcion.valor)}
                 className={cn(
                   "flex cursor-pointer items-start gap-3 border p-3 text-sm",
                   field.value === opcion.valor
@@ -58,7 +72,7 @@ export function CampoOpciones<T extends FieldValues, TOut extends FieldValues>({
                 <input
                   type="radio"
                   name={field.name}
-                  value={opcion.valor}
+                  value={String(opcion.valor)}
                   checked={field.value === opcion.valor}
                   onChange={() => {
                     field.onChange(opcion.valor);

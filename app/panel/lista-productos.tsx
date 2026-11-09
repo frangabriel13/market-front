@@ -66,7 +66,7 @@ function Disponibilidad({
   producto: ProductoResumen;
 }) {
   if (combinaciones === 0) {
-    return <p className="text-sm text-destructive">Sin colores ni talles</p>;
+    return <p className="text-sm text-destructive">Sin disponibilidad marcada</p>;
   }
   if (agotadas === combinaciones) {
     return <p className="text-sm font-bold text-destructive">Todo agotado</p>;

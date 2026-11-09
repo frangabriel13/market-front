@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { EncabezadoPagina } from "../../encabezado-pagina";
 import { InterruptorVisible } from "../../interruptor-visible";
-import { obtenerCategorias, obtenerMarca, obtenerProducto } from "../datos";
+import { obtenerCategorias, obtenerListas, obtenerProducto } from "../datos";
 import { EliminarProducto } from "../eliminar-producto";
 import { FormularioCargando } from "../formulario-cargando";
 import { FotosProducto } from "../fotos-producto";
@@ -33,10 +33,10 @@ export default function EditarProductoPage({ params, searchParams }: Props) {
 
 async function EditarProducto({ params, searchParams }: Props) {
   const [{ id }, { incompleto }] = await Promise.all([params, searchParams]);
-  const [producto, categorias, marca] = await Promise.all([
+  const [producto, categorias, listas] = await Promise.all([
     obtenerProducto(id),
     obtenerCategorias(),
-    obtenerMarca(),
+    obtenerListas(),
   ]);
   return (
     <>
@@ -63,7 +63,7 @@ async function EditarProducto({ params, searchParams }: Props) {
           <ProductoForm
             producto={producto}
             categorias={categorias}
-            marca={marca}
+            listas={listas}
           />
         </div>
         <EliminarProducto productoId={producto.id} nombre={producto.nombre} />

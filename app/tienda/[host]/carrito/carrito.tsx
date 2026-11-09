@@ -11,9 +11,11 @@ import {
   totalDe,
   unidadesDe,
   useCarrito,
+  type ItemCarrito,
   type ProductoEnCarrito,
 } from "@/lib/carrito";
 import { formatearPrecio } from "@/lib/formato";
+import { SIN_VALOR } from "@/lib/schemas/productos";
 import { cn } from "@/lib/utils";
 import { RUTA_DATOS_PEDIDO, rutaProducto } from "../rutas";
 
@@ -113,11 +115,6 @@ function Producto({ producto }: { producto: ProductoEnCarrito }) {
     (carrito) => carrito.reemplazarProducto,
   );
   const unidades = unidadesDe(producto.items);
-  // "Negro: S×1 · M×2", un renglón por color.
-  const porColor = new Map<string, string[]>();
-  for (const { color, talle, cantidad } of producto.items) {
-    porColor.set(color, [...(porColor.get(color) ?? []), `${talle}×${cantidad}`]);
-  }
   const href = rutaProducto(producto.productoId);
   return (
     <li className="flex gap-4 py-4">
@@ -153,9 +150,9 @@ function Producto({ producto }: { producto: ProductoEnCarrito }) {
           {unidades} {unidades === 1 ? "unidad" : "unidades"} ·{" "}
           {formatearPrecio(producto.precio)} c/u
         </p>
-        {[...porColor].map(([color, talles]) => (
-          <p key={color} className="text-sm">
-            {color}: {talles.join(" · ")}
+        {renglones(producto.items).map((renglon) => (
+          <p key={renglon} className="text-sm">
+            {renglon}
           </p>
         ))}
         <div className="mt-1 flex gap-5 text-sm font-semibold">
@@ -190,5 +187,25 @@ export function CarritoCargando() {
         </div>
       ))}
     </div>
+  );
+}
+
+// "Negro: S×1 · M×2", un renglón por color. Sin talles, uno solo
+// ("Negro×2 · Gris×1"); sin colores, sin el nombre ("S×1 · M×2"). Un producto
+// sin ninguno de los dos no lleva renglones: ya se ven las unidades.
+function renglones(items: ItemCarrito[]): string[] {
+  if (items.every((item) => item.talle === SIN_VALOR)) {
+    const conColor = items.filter((item) => item.color !== SIN_VALOR);
+    return conColor.length > 0
+      ? [conColor.map((item) => `${item.color}×${item.cantidad}`).join(" · ")]
+      : [];
+  }
+  const porColor = new Map<string, string[]>();
+  for (const { color, talle, cantidad } of items) {
+    porColor.set(color, [...(porColor.get(color) ?? []), `${talle}×${cantidad}`]);
+  }
+  return [...porColor].map(
+    ([color, talles]) =>
+      `${color === SIN_VALOR ? "" : `${color}: `}${talles.join(" · ")}`,
   );
 }
