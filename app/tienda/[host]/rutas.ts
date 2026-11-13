@@ -4,6 +4,8 @@ export const rutaCategoria = (slug: string) => `/categoria/${slug}`;
 
 export const rutaProducto = (id: string) => `/producto/${id}`;
 
+export const RUTA_PRODUCTOS = "/productos";
+
 export const RUTA_CARRITO = "/carrito";
 
 export const RUTA_DATOS_PEDIDO = "/pedido";

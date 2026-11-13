@@ -23,6 +23,20 @@ export const obtenerCategorias = cache((host: string) =>
 export const obtenerDestacados = (host: string) =>
   tiendaFetch<ProductoTiendaResumen[]>(host, "tienda/destacados");
 
+export const obtenerTodos = (host: string) =>
+  tiendaFetch<ProductoTiendaResumen[]>(host, "tienda/productos");
+
+// La miniatura del producto más nuevo de la categoría, para su círculo en el
+// inicio. Sin foto o si falla, null: el círculo muestra la inicial.
+// TODO(7.32): que la traiga GET /tienda/categorias y sacar estos pedidos.
+export const obtenerFotoDeCategoria = (host: string, slug: string) =>
+  tiendaFetch<ProductoTiendaResumen[]>(
+    host,
+    `tienda/productos?categoria=${encodeURIComponent(slug)}`,
+  )
+    .then((productos) => productos.find((p) => p.miniatura)?.miniatura ?? null)
+    .catch(() => null);
+
 export const obtenerProductos = (host: string, categoria: string) =>
   oNoEncontrado(
     tiendaFetch<ProductoTiendaResumen[]>(

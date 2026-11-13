@@ -20,3 +20,12 @@ export function ubicarCategoria(
 
 export const tituloDe = ({ categoria, subcategoria }: Ubicacion) =>
   subcategoria ? `${categoria.nombre} › ${subcategoria.nombre}` : categoria.nombre;
+
+// Las que se muestran a la vista (círculos del inicio, menú de escritorio):
+// con una sola categoría principal (ej. "Mujer"), sus subcategorías dicen más.
+export function categoriasALaVista(categorias: CategoriaTienda[]) {
+  const [unica] = categorias;
+  return categorias.length === 1 && unica.subcategorias.length > 0
+    ? unica.subcategorias
+    : categorias;
+}

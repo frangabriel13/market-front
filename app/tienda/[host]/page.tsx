@@ -1,30 +1,41 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Suspense } from "react";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
-import { ChipsCategorias } from "./chips-categorias";
-import { obtenerCategorias, obtenerDestacados, obtenerMarca } from "./datos";
+import {
+  CirculosCategorias,
+  CirculosCategoriasCargando,
+} from "./circulos-categorias";
+import { obtenerDestacados, obtenerMarca } from "./datos";
 import { GrillaProductos, GrillaProductosCargando } from "./grilla-productos";
+import { RUTA_PRODUCTOS } from "./rutas";
 
 type Params = { params: Promise<{ host: string }> };
-
-const DESTACADOS = "destacados";
 
 export default function InicioTiendaPage({ params }: PageProps<"/tienda/[host]">) {
   return (
     <>
-      <Suspense fallback={<Skeleton className="aspect-[5/4] rounded-none" />}>
+      <Suspense fallback={<Skeleton className="aspect-[5/2] rounded-none" />}>
         <Portada params={params} />
       </Suspense>
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 pt-5">
-        <Suspense>
+        <Suspense fallback={<CirculosCategoriasCargando />}>
           <Categorias params={params} />
         </Suspense>
-        <section id={DESTACADOS} className="scroll-mt-32">
-          <h2 className="titulo mb-4 text-2xl">Destacados</h2>
+        <section>
+          <div className="mb-3 flex items-baseline justify-between">
+            <h2 className="text-[15px] font-extrabold tracking-wider uppercase">
+              Novedades
+            </h2>
+            <Link
+              href={RUTA_PRODUCTOS}
+              className="text-sm text-muted-foreground underline-offset-4 hover:underline"
+            >
+              Ver todo
+            </Link>
+          </div>
           <Suspense fallback={<GrillaProductosCargando />}>
-            <Destacados params={params} />
+            <Novedades params={params} />
           </Suspense>
         </section>
       </div>
@@ -32,59 +43,35 @@ export default function InicioTiendaPage({ params }: PageProps<"/tienda/[host]">
   );
 }
 
-// El primer texto del banner es el título; los demás, la bajada.
+// La portada se muestra entera, con su proporción, sin textos encima: los
+// textos del banner dejaron de mostrarse (decidido el 13/11, en la 7.1).
 async function Portada({ params }: Params) {
   const marca = await obtenerMarca((await params).host);
-  const [titulo, ...bajada] = marca.textosBanner;
-  if (!marca.portadaUrl && !titulo) {
-    return <h1 className="sr-only">{marca.nombre}</h1>;
-  }
-  const conFoto = Boolean(marca.portadaUrl);
   return (
-    <section
-      className={cn(
-        "relative flex aspect-[5/4] flex-col justify-end px-4 py-6 sm:aspect-[21/9]",
-        conFoto ? "text-white" : "bg-[#d9dce1]",
-      )}
-    >
+    <>
+      <h1 className="sr-only">{marca.nombre}</h1>
       {marca.portadaUrl && (
-        <>
-          <Image
-            src={marca.portadaUrl}
-            alt=""
-            fill
-            unoptimized
-            priority
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent" />
-        </>
+        <Image
+          src={marca.portadaUrl}
+          alt=""
+          width={0}
+          height={0}
+          sizes="100vw"
+          unoptimized
+          priority
+          className="h-auto w-full"
+        />
       )}
-      <div className="relative mx-auto w-full max-w-5xl">
-        <h1 className="titulo text-4xl">{titulo ?? marca.nombre}</h1>
-        {bajada.map((texto, i) => (
-          <p key={i} className="mt-2 text-base">
-            {texto}
-          </p>
-        ))}
-        <Button
-          asChild
-          size="lg"
-          className={cn("mt-4", conFoto && "bg-white text-foreground hover:bg-white/90")}
-        >
-          <a href={`#${DESTACADOS}`}>Ver productos</a>
-        </Button>
-      </div>
-    </section>
+    </>
   );
 }
 
 async function Categorias({ params }: Params) {
-  const categorias = await obtenerCategorias((await params).host);
-  return <ChipsCategorias chips={categorias} />;
+  return <CirculosCategorias host={(await params).host} />;
 }
 
-async function Destacados({ params }: Params) {
+// Los 8 visibles más nuevos.
+async function Novedades({ params }: Params) {
   const productos = await obtenerDestacados((await params).host);
   if (productos.length === 0) {
     return (
