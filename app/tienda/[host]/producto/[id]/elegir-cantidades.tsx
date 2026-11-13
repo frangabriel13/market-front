@@ -10,7 +10,10 @@ import { CANTIDAD_MAXIMA, useCarrito, type ItemCarrito } from "@/lib/carrito";
 import { formatearPrecio } from "@/lib/formato";
 import { SIN_VALOR, type VarianteProducto } from "@/lib/schemas/productos";
 import { cn } from "@/lib/utils";
-import { descripcionVariante } from "@/lib/variantes";
+import {
+  descripcionVariante,
+  MAXIMO_TALLES_EN_GRILLA,
+} from "@/lib/variantes";
 import { RUTA_CARRITO } from "../../rutas";
 
 type Props = {
@@ -115,12 +118,65 @@ export function ElegirCantidades({ producto, variantes }: Props) {
     );
   }
 
+  const enBloques = conTalles && talles.length > MAXIMO_TALLES_EN_GRILLA;
+  const subtotal = (color: string) =>
+    talles.reduce((suma, talle) => suma + cantidad(color, talle), 0);
+
+  // `conTalle`: en los bloques no hay encabezado de talles, cada casillero
+  // muestra el suyo.
+  const celda = (color: string, talle: string, conTalle = false) =>
+    hay(color, talle) ? (
+      <Casillero
+        etiqueta={descripcionVariante({ color, talle }) || producto.nombre}
+        talle={conTalle ? talle : undefined}
+        cantidad={cantidad(color, talle)}
+        onSumar={() => cambiar(color, talle, 1)}
+        onRestar={() => cambiar(color, talle, -1)}
+      />
+    ) : (
+      <div className="flex h-12 min-w-14 flex-col items-center justify-center border border-dashed border-input text-[10px] font-bold text-muted-foreground uppercase">
+        {conTalle && <span className="text-xs normal-case">{talle}</span>}
+        Agotado
+      </div>
+    );
+
   return (
     <section className="flex flex-col gap-3">
       <h2 className="text-sm font-bold tracking-wider uppercase">
         {titulo(conColores, conTalles)}
       </h2>
-      <div className="-mx-4 overflow-x-auto px-3">
+      {enBloques && (
+        <div className="flex flex-col md:hidden">
+          {colores.map((color) => (
+            <div
+              key={color}
+              className="flex flex-col gap-2 border-b py-3 first:pt-0"
+            >
+              {conColores && (
+                <p className="flex justify-between text-sm">
+                  <span className="font-semibold">{color}</span>
+                  {subtotal(color) > 0 && (
+                    <span className="text-muted-foreground">
+                      {unidades(subtotal(color))}
+                    </span>
+                  )}
+                </p>
+              )}
+              <div className="grid grid-cols-5 gap-2">
+                {talles.map((talle) => (
+                  <div key={talle}>{celda(color, talle, true)}</div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      <div
+        className={cn(
+          "-mx-4 overflow-x-auto px-3",
+          enBloques && "hidden md:block",
+        )}
+      >
         <table className="w-full border-separate border-spacing-1.5">
           {conTalles && (
             <thead>
@@ -146,23 +202,7 @@ export function ElegirCantidades({ producto, variantes }: Props) {
                   </th>
                 )}
                 {talles.map((talle) => (
-                  <td key={talle}>
-                    {hay(color, talle) ? (
-                      <Casillero
-                        etiqueta={
-                          descripcionVariante({ color, talle }) ||
-                          producto.nombre
-                        }
-                        cantidad={cantidad(color, talle)}
-                        onSumar={() => cambiar(color, talle, 1)}
-                        onRestar={() => cambiar(color, talle, -1)}
-                      />
-                    ) : (
-                      <div className="flex h-12 min-w-14 items-center justify-center border border-dashed border-input text-[10px] font-bold text-muted-foreground uppercase">
-                        Agotado
-                      </div>
-                    )}
-                  </td>
+                  <td key={talle}>{celda(color, talle)}</td>
                 ))}
               </tr>
             ))}
@@ -216,11 +256,14 @@ export function ElegirCantidades({ producto, variantes }: Props) {
 
 function Casillero({
   etiqueta,
+  talle,
   cantidad,
   onSumar,
   onRestar,
 }: {
   etiqueta: string;
+  // En los bloques por color, el talle va dentro del casillero.
+  talle?: string;
   cantidad: number;
   onSumar: () => void;
   onRestar: () => void;
@@ -232,12 +275,13 @@ function Casillero({
         onClick={onSumar}
         aria-label={`Sumar una unidad de ${etiqueta}${cantidad ? ` (van ${cantidad})` : ""}`}
         className={cn(
-          "flex h-12 w-full min-w-14 items-center justify-center text-lg",
+          "flex h-12 w-full min-w-14 flex-col items-center justify-center text-lg leading-tight",
           cantidad
             ? "bg-foreground font-bold text-background"
             : "bg-muted hover:bg-accent",
         )}
       >
+        {talle && <span className="text-xs font-semibold">{talle}</span>}
         {cantidad || <Plus className="size-4" />}
       </button>
       {cantidad > 0 && (

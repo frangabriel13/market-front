@@ -22,7 +22,8 @@ const REDES: {
 ];
 
 const EXTERNO = { target: "_blank", rel: "noopener noreferrer" } as const;
-const LINK = "underline underline-offset-4 hover:no-underline";
+const LINK = "underline-offset-4 hover:underline";
+const TITULO = "mb-2 text-[11px] font-bold tracking-[0.12em] text-background/60 uppercase";
 
 export async function Pie({ params }: { params: Promise<{ host: string }> }) {
   const marca = await obtenerMarca((await params).host);
@@ -43,9 +44,11 @@ export async function Pie({ params }: { params: Promise<{ host: string }> }) {
   const hayRetiro = marca.opcionesEntrega.some((o) => o.tipo === "RETIRO");
   const retiro = [marca.direccionRetiro, marca.horariosRetiro].filter(Boolean);
 
+  const plataforma = process.env.PLATFORM_NAME;
+
   return (
     <footer className="mt-16 bg-foreground text-background">
-      <div className="mx-auto flex max-w-5xl flex-col gap-6 px-4 py-10">
+      <div className="mx-auto grid max-w-5xl gap-7 px-4 py-9 md:grid-cols-3 md:py-12">
         {hayRetiro && retiro.length > 0 && (
           <Bloque titulo="Retiros">{retiro.join("\n")}</Bloque>
         )}
@@ -59,7 +62,8 @@ export async function Pie({ params }: { params: Promise<{ host: string }> }) {
           </a>
         </Bloque>
         <nav aria-label="Información">
-          <ul className="flex flex-wrap gap-x-6 gap-y-3 text-sm">
+          <h2 className={TITULO}>Información</h2>
+          <ul className="flex flex-wrap gap-x-6 gap-y-3 text-sm md:flex-col md:gap-2">
             {paginas.map(({ href, texto }) => (
               <li key={href}>
                 <Link href={href} className={LINK}>
@@ -82,6 +86,11 @@ export async function Pie({ params }: { params: Promise<{ host: string }> }) {
           </ul>
         </nav>
       </div>
+      {plataforma && (
+        <p className="border-t border-background/15 px-4 py-4 text-center text-xs text-background/60">
+          Tienda hecha con {plataforma}
+        </p>
+      )}
     </footer>
   );
 }
@@ -89,10 +98,8 @@ export async function Pie({ params }: { params: Promise<{ host: string }> }) {
 function Bloque({ titulo, children }: { titulo: string; children: ReactNode }) {
   return (
     <section>
-      <h2 className="mb-1 text-xs font-bold tracking-widest uppercase">
-        {titulo}
-      </h2>
-      <p className="text-sm whitespace-pre-line text-background/80">
+      <h2 className={TITULO}>{titulo}</h2>
+      <p className="text-sm whitespace-pre-line">
         {children}
       </p>
     </section>

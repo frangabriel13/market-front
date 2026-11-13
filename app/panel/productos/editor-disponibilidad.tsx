@@ -2,7 +2,10 @@
 
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { descripcionVariante } from "@/lib/variantes";
+import {
+  descripcionVariante,
+  MAXIMO_TALLES_EN_GRILLA,
+} from "@/lib/variantes";
 import { RUTA_LISTAS } from "../aviso-listas";
 import {
   alternar,
@@ -49,6 +52,32 @@ export function EditorDisponibilidad({ valores, matriz, onCambiar }: Props) {
     });
   };
 
+  const enBloques =
+    conTalles && matriz.talles.length > MAXIMO_TALLES_EN_GRILLA;
+
+  // `conTalle`: en los bloques no hay encabezado de talles, cada casillero
+  // muestra el suyo.
+  const celda = (color: string, talle: string, conTalle = false) => {
+    const hay = !matriz.agotadas.includes(clave(color, talle));
+    return (
+      <button
+        type="button"
+        aria-pressed={hay}
+        aria-label={`${descripcionVariante({ color, talle }) || "Producto"}: ${hay ? "hay" : "agotado"}`}
+        onClick={() => alternarAgotada(color, talle)}
+        className={cn(
+          "flex h-12 w-full min-w-14 flex-col items-center justify-center rounded-md text-[10px] font-bold uppercase",
+          hay
+            ? "bg-foreground text-background"
+            : "border border-dashed border-input text-muted-foreground",
+        )}
+      >
+        {conTalle && <span className="text-xs normal-case">{talle}</span>}
+        {hay ? "Hay" : "Agotado"}
+      </button>
+    );
+  };
+
   return (
     <>
       {conColores && (
@@ -85,7 +114,31 @@ export function EditorDisponibilidad({ valores, matriz, onCambiar }: Props) {
               ? "Tocá un casillero para marcarlo como agotado o disponible."
               : "Tocalo para marcar el producto como agotado o disponible."}
           </p>
-          <div className="-mx-4 overflow-x-auto px-3">
+          {enBloques && (
+            <div className="flex flex-col md:hidden">
+              {matriz.colores.map((color) => (
+                <div
+                  key={color}
+                  className="flex flex-col gap-2 border-b py-3 last:border-b-0"
+                >
+                  {conColores && (
+                    <p className="text-sm font-semibold">{color}</p>
+                  )}
+                  <div className="grid grid-cols-5 gap-1.5">
+                    {matriz.talles.map((talle) => (
+                      <div key={talle}>{celda(color, talle, true)}</div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          <div
+            className={cn(
+              "-mx-4 overflow-x-auto px-3",
+              enBloques && "hidden md:block",
+            )}
+          >
             <table className="w-full border-separate border-spacing-1.5">
               {conTalles && (
                 <thead>
@@ -110,28 +163,9 @@ export function EditorDisponibilidad({ valores, matriz, onCambiar }: Props) {
                         {color}
                       </th>
                     )}
-                    {matriz.talles.map((talle) => {
-                      const k = clave(color, talle);
-                      const hay = !matriz.agotadas.includes(k);
-                      return (
-                        <td key={talle}>
-                          <button
-                            type="button"
-                            aria-pressed={hay}
-                            aria-label={`${descripcionVariante({ color, talle }) || "Producto"}: ${hay ? "hay" : "agotado"}`}
-                            onClick={() => alternarAgotada(color, talle)}
-                            className={cn(
-                              "flex h-12 w-full min-w-14 items-center justify-center rounded-md text-[10px] font-bold uppercase",
-                              hay
-                                ? "bg-foreground text-background"
-                                : "border border-dashed border-input text-muted-foreground",
-                            )}
-                          >
-                            {hay ? "Hay" : "Agotado"}
-                          </button>
-                        </td>
-                      );
-                    })}
+                    {matriz.talles.map((talle) => (
+                      <td key={talle}>{celda(color, talle)}</td>
+                    ))}
                   </tr>
                 ))}
               </tbody>
