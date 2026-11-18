@@ -71,7 +71,7 @@ function Seccion({ titulo, descripcion, children }: SeccionProps) {
   return (
     <section className="flex flex-col gap-3">
       <div>
-        <h2 className="text-sm font-bold tracking-wider uppercase">{titulo}</h2>
+        <h2 className="titulo-seccion">{titulo}</h2>
         <p className="text-sm text-muted-foreground">{descripcion}</p>
       </div>
       {children}

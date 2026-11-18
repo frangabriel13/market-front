@@ -16,7 +16,7 @@ export function GuiaTalles({ url }: { url: string }) {
       <SheetTrigger asChild>
         <button
           type="button"
-          className="flex w-full items-center justify-between border-b py-3 text-sm font-bold tracking-wider uppercase"
+          className="flex w-full items-center justify-between border-b py-3 titulo-seccion"
         >
           Guía de talles
           <Ruler className="size-4" />

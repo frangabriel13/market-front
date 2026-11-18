@@ -31,7 +31,7 @@ export function PedidoListo() {
   return (
     <div className="flex flex-1 flex-col gap-5">
       <div>
-        <h1 className="titulo text-3xl">Tu pedido está armado</h1>
+        <h1 className="titulo">Tu pedido está armado</h1>
         <p className="mt-2">
           Falta un paso: tocá el botón verde y enviá el mensaje a la marca.
         </p>

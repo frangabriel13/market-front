@@ -12,7 +12,7 @@ export function BotonSalir({ sobreOscuro }: { sobreOscuro?: boolean }) {
         size="sm"
         className={cn(
           sobreOscuro &&
-            "border-white/30 bg-transparent text-background hover:bg-white/10 hover:text-background",
+            "border-background/40 bg-transparent text-background hover:bg-background/10",
         )}
       >
         <LogOut />

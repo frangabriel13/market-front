@@ -48,7 +48,7 @@ async function DetalleProducto({ params }: Pick<Props, "params">) {
         <GaleriaFotos fotos={producto.fotos} nombre={producto.nombre} />
         <div className="flex flex-col gap-6 px-4 pt-5 md:px-0 md:pt-0">
           <div>
-            <h1 className="titulo text-3xl">{producto.nombre}</h1>
+            <h1 className="titulo">{producto.nombre}</h1>
             <p className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
               <span className="text-2xl font-black">
                 {formatearPrecio(producto.precio)}
@@ -75,7 +75,7 @@ async function DetalleProducto({ params }: Pick<Props, "params">) {
           <div>
             {producto.descripcion && (
               <section className="mb-4">
-                <h2 className="border-b-2 border-foreground pb-2 text-sm font-bold tracking-wider uppercase">
+                <h2 className="border-b-2 border-foreground pb-2 titulo-seccion">
                   Descripción
                 </h2>
                 <p className="pt-3 text-sm whitespace-pre-line">

@@ -189,7 +189,7 @@ function FormularioPedido({
       />
 
       <section className="flex flex-col gap-4">
-        <h2 className="text-sm font-bold tracking-wider uppercase">Tus datos</h2>
+        <h2 className="titulo-seccion">Tus datos</h2>
         <CampoTexto
           control={form.control}
           name="nombre"
@@ -210,7 +210,7 @@ function FormularioPedido({
 
       {tipoEntrega === "ENVIO" && (
         <section className="flex flex-col gap-4">
-          <h2 className="text-sm font-bold tracking-wider uppercase">
+          <h2 className="titulo-seccion">
             Datos para el envío
           </h2>
           <div className="grid grid-cols-2 gap-3">

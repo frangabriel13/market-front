@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function CarritoPage({ params }: PageProps<"/tienda/[host]/carrito">) {
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col px-4 pt-6">
-      <h1 className="titulo mb-4 text-3xl">Tu pedido</h1>
+      <h1 className="titulo mb-4">Tu pedido</h1>
       <Suspense fallback={<CarritoCargando />}>
         <CarritoDeLaMarca params={params} />
       </Suspense>

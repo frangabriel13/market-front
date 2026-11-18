@@ -13,14 +13,14 @@ export const metadata: Metadata = {
 
 export default function TodosLosProductosPage({ params }: Props) {
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pt-4">
+    <div className="contenedor flex flex-col gap-4 pt-4">
       <Migas
         migas={[
           { href: "/", texto: "Inicio" },
           { href: RUTA_PRODUCTOS, texto: "Todos los productos" },
         ]}
       />
-      <h1 className="titulo text-3xl">Todos los productos</h1>
+      <h1 className="titulo">Todos los productos</h1>
       <Suspense fallback={<GrillaProductosCargando />}>
         <Listado params={params} />
       </Suspense>

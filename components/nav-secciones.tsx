@@ -39,7 +39,7 @@ function Pestanias({ secciones, ruta }: Props & { ruta: string | null }) {
             href={seccion.href}
             aria-current={actual ? "page" : undefined}
             className={cn(
-              "-mb-px border-b-2 py-3 text-sm font-medium",
+              "-mb-px border-b-2 py-3.5 text-sm font-semibold whitespace-nowrap transition-colors",
               actual
                 ? "border-foreground text-foreground"
                 : "border-transparent text-muted-foreground hover:text-foreground",

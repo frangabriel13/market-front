@@ -18,13 +18,13 @@ export default function InicioTiendaPage({ params }: PageProps<"/tienda/[host]">
       <Suspense fallback={<Skeleton className="aspect-[5/2] rounded-none" />}>
         <Portada params={params} />
       </Suspense>
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 pt-5">
+      <div className="contenedor flex flex-col gap-6 pt-5">
         <Suspense fallback={<CirculosCategoriasCargando />}>
           <Categorias params={params} />
         </Suspense>
         <section>
           <div className="mb-3 flex items-baseline justify-between">
-            <h2 className="text-[15px] font-extrabold tracking-wider uppercase">
+            <h2 className="titulo-seccion">
               Novedades
             </h2>
             <Link

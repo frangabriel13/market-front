@@ -3,6 +3,7 @@
 import { useId } from "react";
 import { Controller, type Control } from "react-hook-form";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { SelectNativo } from "@/components/ui/select-nativo";
 import type { CategoriaConSubcategorias } from "@/lib/schemas/categorias";
 import type {
   ProductoCrear,
@@ -27,7 +28,6 @@ function opciones(categorias: CategoriaConSubcategorias[]) {
   );
 }
 
-// Select nativo: en el celular abre el selector del sistema.
 export function CampoCategoria({ control, categorias }: Props) {
   const id = useId();
   return (
@@ -37,12 +37,11 @@ export function CampoCategoria({ control, categorias }: Props) {
       render={({ field, fieldState }) => (
         <Field data-invalid={fieldState.invalid}>
           <FieldLabel htmlFor={id}>Categoría</FieldLabel>
-          <select
+          <SelectNativo
             {...field}
             id={id}
             aria-invalid={fieldState.invalid}
-            className="h-10 w-full rounded-lg border border-input bg-background px-3 text-base outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive md:text-sm"
-          >
+            >
             <option value="" disabled>
               Elegí una categoría
             </option>
@@ -51,7 +50,7 @@ export function CampoCategoria({ control, categorias }: Props) {
                 {texto}
               </option>
             ))}
-          </select>
+          </SelectNativo>
           <FieldError errors={[fieldState.error]} />
         </Field>
       )}

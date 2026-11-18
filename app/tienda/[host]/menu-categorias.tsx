@@ -27,9 +27,9 @@ export function MenuCategorias({ categorias }: { categorias: CategoriaTienda[] }
           <Menu />
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-4/5 gap-0" aria-describedby={undefined}>
-        <SheetHeader className="border-b">
-          <SheetTitle className="font-bold uppercase">Categorías</SheetTitle>
+      <SheetContent side="left" className="gap-0" aria-describedby={undefined}>
+        <SheetHeader>
+          <SheetTitle>Categorías</SheetTitle>
         </SheetHeader>
         <nav className="overflow-y-auto">
           <ul className="divide-y">

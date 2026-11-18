@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function PedidoPage({ params }: PageProps<"/tienda/[host]/pedido">) {
   return (
     <div className="mx-auto w-full max-w-2xl px-4 pt-6">
-      <h1 className="titulo mb-5 text-3xl">Datos del pedido</h1>
+      <h1 className="titulo mb-5">Datos del pedido</h1>
       <Suspense fallback={<FormularioCargando />}>
         <DatosPedidoDeLaMarca params={params} />
       </Suspense>

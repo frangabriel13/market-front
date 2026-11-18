@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default function CategoriaPage({ params }: Props) {
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 pt-4">
+    <div className="contenedor pt-4">
       <Suspense fallback={<ListadoCargando />}>
         <Listado params={params} />
       </Suspense>
@@ -53,7 +53,7 @@ async function Listado({ params }: Pick<Props, "params">) {
             : []),
         ]}
       />
-      <h1 className="titulo text-3xl">{(subcategoria ?? categoria).nombre}</h1>
+      <h1 className="titulo">{(subcategoria ?? categoria).nombre}</h1>
       <ChipsCategorias chips={chips} actual={slug} />
       <GrillaProductos productos={productos} />
     </div>

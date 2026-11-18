@@ -36,7 +36,7 @@ export function ImagenesMarca({ marca }: { marca: Marca }) {
 
   return (
     <section className="mb-8 flex flex-col gap-4">
-      <h2 className="text-sm font-bold tracking-wider uppercase">Imágenes</h2>
+      <h2 className="titulo-seccion">Imágenes</h2>
       {IMAGENES.map(({ tipo, campo, ...imagen }) => (
         <CampoImagen
           key={tipo}
