@@ -5,7 +5,7 @@ type Miga = { href: string; texto: string };
 // La última es la página actual y va sin link.
 export function Migas({ migas }: { migas: Miga[] }) {
   return (
-    <nav aria-label="Ubicación" className="text-sm">
+    <nav aria-label="Ubicación" className="text-xs md:text-[13px]">
       <ol className="flex flex-wrap items-center gap-x-1.5 text-muted-foreground">
         {migas.map(({ href, texto }, i) => (
           <li key={href} className="flex items-center gap-1.5">
@@ -13,7 +13,7 @@ export function Migas({ migas }: { migas: Miga[] }) {
             {i < migas.length - 1 ? (
               <Link
                 href={href}
-                className="underline underline-offset-2 hover:text-foreground"
+                className="underline-offset-2 hover:text-foreground hover:underline"
               >
                 {texto}
               </Link>

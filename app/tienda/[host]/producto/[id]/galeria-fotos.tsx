@@ -42,7 +42,7 @@ export function GaleriaFotos({ fotos, nombre }: Props) {
               alt={`${nombre}, foto ${i + 1} de ${fotos.length}`}
               fill
               unoptimized
-              priority={i === 0}
+              preload={i === 0}
               loading={i === 0 ? undefined : "lazy"}
               className="object-cover"
             />

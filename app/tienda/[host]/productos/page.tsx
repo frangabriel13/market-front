@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { obtenerTodos } from "../datos";
-import { GrillaProductos, GrillaProductosCargando } from "../grilla-productos";
+import {
+  GrillaProductos,
+  GrillaProductosCargando,
+  SinProductos,
+  TituloListado,
+} from "../grilla-productos";
 import { Migas } from "../migas";
 import { RUTA_PRODUCTOS } from "../rutas";
 
@@ -13,15 +18,21 @@ export const metadata: Metadata = {
 
 export default function TodosLosProductosPage({ params }: Props) {
   return (
-    <div className="contenedor flex flex-col gap-4 pt-4">
+    <div className="contenedor flex flex-col gap-3 pt-4 md:gap-4">
       <Migas
         migas={[
           { href: "/", texto: "Inicio" },
           { href: RUTA_PRODUCTOS, texto: "Todos los productos" },
         ]}
       />
-      <h1 className="titulo">Todos los productos</h1>
-      <Suspense fallback={<GrillaProductosCargando />}>
+      <Suspense
+        fallback={
+          <>
+            <TituloListado titulo="Todos los productos" />
+            <GrillaProductosCargando />
+          </>
+        }
+      >
         <Listado params={params} />
       </Suspense>
     </div>
@@ -30,13 +41,15 @@ export default function TodosLosProductosPage({ params }: Props) {
 
 async function Listado({ params }: Pick<Props, "params">) {
   const productos = await obtenerTodos((await params).host);
-  if (productos.length === 0) {
-    return (
-      <p className="py-10 text-center text-sm text-muted-foreground">
-        Todavía no hay productos.
-      </p>
-    );
-  }
-  return <GrillaProductos productos={productos} />;
+  return (
+    <>
+      <TituloListado titulo="Todos los productos" cantidad={productos.length} />
+      {productos.length > 0 ? (
+        <GrillaProductos productos={productos} />
+      ) : (
+        <SinProductos />
+      )}
+    </>
+  );
 }
 
