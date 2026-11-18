@@ -142,7 +142,7 @@ export function ElegirCantidades({ producto, variantes }: Props) {
 
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-sm font-bold tracking-wider uppercase">
+      <h2 className="titulo-seccion">
         {titulo(conColores, conTalles)}
       </h2>
       {enBloques && (

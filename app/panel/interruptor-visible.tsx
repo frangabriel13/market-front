@@ -27,7 +27,7 @@ export function InterruptorVisible({ productoId, nombre, visible }: Props) {
         checked={visibleOptimista}
         onCheckedChange={cambiar}
         aria-label={`Publicar ${nombre}`}
-        className="scale-150 data-checked:bg-success"
+        className="data-checked:bg-success"
       />
       {error && (
         <p role="alert" className="text-center text-[11px] text-destructive">

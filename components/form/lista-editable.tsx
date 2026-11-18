@@ -51,7 +51,7 @@ export function ListaEditable({
           {value.map((item) => (
             <li
               key={item}
-              className="flex h-8 items-center gap-1 border bg-secondary pr-1 pl-3 text-sm"
+              className="flex h-9 items-center gap-1 bg-muted pr-1 pl-3 text-sm font-medium"
             >
               {item}
               <Button

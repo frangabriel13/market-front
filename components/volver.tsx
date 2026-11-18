@@ -5,7 +5,7 @@ export function Volver({ href, texto }: { href: string; texto: string }) {
   return (
     <Link
       href={href}
-      className="mb-4 -ml-1 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+      className="mb-2 -ml-1 inline-flex h-10 items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground"
     >
       <ChevronLeft className="size-4" />
       {texto}

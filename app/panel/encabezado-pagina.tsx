@@ -28,7 +28,7 @@ export function EncabezadoPagina({ titulo, volver, accion }: Props) {
               Panel de tu marca
             </p>
           )}
-          <h1 className="truncate text-2xl font-black">{titulo}</h1>
+          <h1 className="titulo truncate">{titulo}</h1>
         </div>
         {accion}
       </div>

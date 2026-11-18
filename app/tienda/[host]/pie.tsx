@@ -23,7 +23,7 @@ const REDES: {
 
 const EXTERNO = { target: "_blank", rel: "noopener noreferrer" } as const;
 const LINK = "underline-offset-4 hover:underline";
-const TITULO = "mb-2 text-[11px] font-bold tracking-[0.12em] text-background/60 uppercase";
+const TITULO = "mb-2 text-[11px] font-bold tracking-[0.12em] text-marco-foreground/60 uppercase";
 
 export async function Pie({ params }: { params: Promise<{ host: string }> }) {
   const marca = await obtenerMarca((await params).host);
@@ -47,8 +47,8 @@ export async function Pie({ params }: { params: Promise<{ host: string }> }) {
   const plataforma = process.env.PLATFORM_NAME;
 
   return (
-    <footer className="mt-16 bg-foreground text-background">
-      <div className="mx-auto grid max-w-5xl gap-7 px-4 py-9 md:grid-cols-3 md:py-12">
+    <footer className="mt-16 bg-marco text-marco-foreground">
+      <div className="contenedor grid gap-7 py-9 md:grid-cols-3 md:py-12">
         {hayRetiro && retiro.length > 0 && (
           <Bloque titulo="Retiros">{retiro.join("\n")}</Bloque>
         )}
@@ -87,7 +87,7 @@ export async function Pie({ params }: { params: Promise<{ host: string }> }) {
         </nav>
       </div>
       {plataforma && (
-        <p className="border-t border-background/15 px-4 py-4 text-center text-xs text-background/60">
+        <p className="border-t border-marco-foreground/15 px-4 py-4 text-center text-xs text-marco-foreground/60">
           Tienda hecha con {plataforma}
         </p>
       )}

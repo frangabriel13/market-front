@@ -62,7 +62,7 @@ function Franja({ marca }: { marca: MarcaTienda }) {
   ].filter(Boolean);
   if (avisos.length === 0) return null;
   return (
-    <p className="bg-foreground px-4 py-2 text-center text-[11px] font-semibold tracking-wider text-background uppercase">
+    <p className="bg-marco px-4 py-2 text-center text-[11px] font-semibold tracking-wider text-marco-foreground uppercase">
       {avisos.join(" · ")}
     </p>
   );

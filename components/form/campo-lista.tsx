@@ -8,6 +8,7 @@ import {
   type Path,
 } from "react-hook-form";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { SelectNativo } from "@/components/ui/select-nativo";
 
 type Props<T extends FieldValues, TOut extends FieldValues> = {
   control: Control<T, unknown, TOut>;
@@ -18,7 +19,6 @@ type Props<T extends FieldValues, TOut extends FieldValues> = {
   autoComplete?: string;
 };
 
-// Select nativo: en el celular abre el selector del sistema.
 export function CampoLista<T extends FieldValues, TOut extends FieldValues>({
   control,
   name,
@@ -35,14 +35,13 @@ export function CampoLista<T extends FieldValues, TOut extends FieldValues>({
       render={({ field, fieldState }) => (
         <Field data-invalid={fieldState.invalid}>
           <FieldLabel htmlFor={id}>{label}</FieldLabel>
-          <select
+          <SelectNativo
             {...field}
             value={(field.value as string | null | undefined) ?? ""}
             id={id}
             autoComplete={autoComplete}
             aria-invalid={fieldState.invalid}
-            className="h-10 w-full rounded-lg border border-input bg-background px-3 text-base outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive md:text-sm"
-          >
+            >
             <option value="" disabled>
               {placeholder}
             </option>
@@ -51,7 +50,7 @@ export function CampoLista<T extends FieldValues, TOut extends FieldValues>({
                 {opcion}
               </option>
             ))}
-          </select>
+          </SelectNativo>
           <FieldError errors={[fieldState.error]} />
         </Field>
       )}

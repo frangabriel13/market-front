@@ -50,7 +50,7 @@ export function CampoOpciones<
       name={name}
       render={({ field, fieldState }) => (
         <fieldset className="flex flex-col gap-2">
-          <legend className="mb-2 text-sm font-bold tracking-wider uppercase">
+          <legend className="mb-2 titulo-seccion">
             {titulo}
           </legend>
           {descripcion && (
@@ -63,10 +63,10 @@ export function CampoOpciones<
               <label
                 key={String(opcion.valor)}
                 className={cn(
-                  "flex cursor-pointer items-start gap-3 border p-3 text-sm",
+                  "flex cursor-pointer items-start gap-3 border p-3 text-sm transition-colors has-focus-visible:ring-2 has-focus-visible:ring-ring",
                   field.value === opcion.valor
-                    ? "border-2 border-foreground"
-                    : "border-input",
+                    ? "border-foreground ring-1 ring-foreground"
+                    : "border-input hover:border-foreground/60",
                 )}
               >
                 <input
@@ -79,7 +79,7 @@ export function CampoOpciones<
                     onElegir?.(opcion.valor);
                   }}
                   onBlur={field.onBlur}
-                  className="mt-0.5 accent-foreground"
+                  className="mt-0.5 size-4 shrink-0 accent-foreground focus-visible:outline-none"
                 />
                 <span className="flex flex-col gap-0.5">
                   <span className="font-bold">{opcion.titulo}</span>
@@ -91,7 +91,9 @@ export function CampoOpciones<
             ))}
           </div>
           {fieldState.error && (
-            <p className="text-sm text-destructive">{fieldState.error.message}</p>
+            <p role="alert" className="text-sm text-destructive">
+              {fieldState.error.message}
+            </p>
           )}
         </fieldset>
       )}

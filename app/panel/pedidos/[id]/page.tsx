@@ -154,7 +154,7 @@ type ConHijos = { children: React.ReactNode };
 function Seccion({ titulo, children }: ConHijos & { titulo: string }) {
   return (
     <section className={`flex flex-col gap-1 ${TARJETA}`}>
-      <h2 className="mb-1 text-sm font-bold tracking-wider uppercase">
+      <h2 className="mb-1 titulo-seccion">
         {titulo}
       </h2>
       {children}
