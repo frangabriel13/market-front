@@ -7,7 +7,11 @@ import {
   CirculosCategoriasCargando,
 } from "./circulos-categorias";
 import { obtenerDestacados, obtenerMarca } from "./datos";
-import { GrillaProductos, GrillaProductosCargando } from "./grilla-productos";
+import {
+  GrillaProductos,
+  GrillaProductosCargando,
+  SinProductos,
+} from "./grilla-productos";
 import { RUTA_PRODUCTOS } from "./rutas";
 
 type Params = { params: Promise<{ host: string }> };
@@ -15,10 +19,10 @@ type Params = { params: Promise<{ host: string }> };
 export default function InicioTiendaPage({ params }: PageProps<"/tienda/[host]">) {
   return (
     <>
-      <Suspense fallback={<Skeleton className="aspect-[5/2] rounded-none" />}>
+      <Suspense fallback={<Skeleton className="aspect-[5/2]" />}>
         <Portada params={params} />
       </Suspense>
-      <div className="contenedor flex flex-col gap-6 pt-5">
+      <div className="contenedor flex flex-col gap-6 pt-5 md:gap-8 md:pt-7">
         <Suspense fallback={<CirculosCategoriasCargando />}>
           <Categorias params={params} />
         </Suspense>
@@ -58,7 +62,7 @@ async function Portada({ params }: Params) {
           height={0}
           sizes="100vw"
           unoptimized
-          priority
+          preload
           className="h-auto w-full"
         />
       )}
@@ -73,12 +77,6 @@ async function Categorias({ params }: Params) {
 // Los 8 visibles más nuevos.
 async function Novedades({ params }: Params) {
   const productos = await obtenerDestacados((await params).host);
-  if (productos.length === 0) {
-    return (
-      <p className="py-10 text-center text-sm text-muted-foreground">
-        Todavía no hay productos.
-      </p>
-    );
-  }
+  if (productos.length === 0) return <SinProductos />;
   return <GrillaProductos productos={productos} />;
 }

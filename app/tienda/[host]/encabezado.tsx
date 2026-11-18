@@ -17,7 +17,11 @@ import { RUTA_PRODUCTOS, rutaCategoria } from "./rutas";
 const FILA =
   "mx-auto grid h-14 w-full max-w-5xl grid-cols-[2.75rem_1fr_2.75rem] items-center px-2 md:h-16 md:grid-cols-[1fr_auto_1fr] md:px-4";
 
-export async function Encabezado({ params }: { params: Promise<{ host: string }> }) {
+export async function Encabezado({
+  params,
+}: {
+  params: Promise<{ host: string }>;
+}) {
   const { host } = await params;
   const [marca, categorias] = await Promise.all([
     obtenerMarca(host),
@@ -30,25 +34,28 @@ export async function Encabezado({ params }: { params: Promise<{ host: string }>
       texto: c.nombre,
     })),
   ];
+  // La franja se va al bajar; queda fija solo la fila de la marca.
   return (
-    <header className="sticky top-0 z-40 border-b bg-background">
+    <>
       <Franja marca={marca} />
-      <div className={FILA}>
-        <div className="md:hidden">
-          <ControlIzquierdo categorias={categorias} />
+      <header className="sticky top-0 z-40 border-b bg-background">
+        <div className={FILA}>
+          <div className="md:hidden">
+            <ControlIzquierdo categorias={categorias} />
+          </div>
+          <Link
+            href="/"
+            className="flex min-w-0 items-center justify-center gap-2 md:justify-self-start"
+          >
+            <Marca marca={marca} />
+          </Link>
+          <NavEscritorio enlaces={categorias.length > 0 ? enlaces : []} />
+          <div className="justify-self-end">
+            <ControlDerecho />
+          </div>
         </div>
-        <Link
-          href="/"
-          className="flex min-w-0 items-center justify-center gap-2 md:justify-self-start"
-        >
-          <Marca marca={marca} />
-        </Link>
-        <NavEscritorio enlaces={categorias.length > 0 ? enlaces : []} />
-        <div className="justify-self-end">
-          <ControlDerecho />
-        </div>
-      </div>
-    </header>
+      </header>
+    </>
   );
 }
 
@@ -62,7 +69,7 @@ function Franja({ marca }: { marca: MarcaTienda }) {
   ].filter(Boolean);
   if (avisos.length === 0) return null;
   return (
-    <p className="bg-marco px-4 py-2 text-center text-[11px] font-semibold tracking-wider text-marco-foreground uppercase">
+    <p className="bg-marco px-4 py-2 text-center text-[11px] font-semibold tracking-[0.06em] text-marco-foreground uppercase md:text-xs">
       {avisos.join(" · ")}
     </p>
   );
@@ -79,7 +86,7 @@ function Marca({ marca }: { marca: MarcaTienda }) {
           width={0}
           height={0}
           unoptimized
-          priority
+          loading="eager"
           className="h-8 w-auto max-w-24 shrink-0 object-contain md:h-9"
         />
       )}

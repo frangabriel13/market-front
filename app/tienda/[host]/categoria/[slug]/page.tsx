@@ -5,7 +5,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { tituloDe, ubicarCategoria } from "../../categorias";
 import { ChipsCategorias } from "../../chips-categorias";
 import { obtenerCategorias, obtenerProductos } from "../../datos";
-import { GrillaProductos, GrillaProductosCargando } from "../../grilla-productos";
+import {
+  GrillaProductos,
+  GrillaProductosCargando,
+  SinProductos,
+  TituloListado,
+} from "../../grilla-productos";
 import { Migas } from "../../migas";
 import { rutaCategoria } from "../../rutas";
 
@@ -43,7 +48,7 @@ async function Listado({ params }: Pick<Props, "params">) {
     : categorias;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3 md:gap-4">
       <Migas
         migas={[
           { href: "/", texto: "Inicio" },
@@ -53,18 +58,28 @@ async function Listado({ params }: Pick<Props, "params">) {
             : []),
         ]}
       />
-      <h1 className="titulo">{(subcategoria ?? categoria).nombre}</h1>
+      <TituloListado
+        titulo={(subcategoria ?? categoria).nombre}
+        cantidad={productos.length}
+      />
       <ChipsCategorias chips={chips} actual={slug} />
-      <GrillaProductos productos={productos} />
+      {productos.length > 0 ? (
+        <div className="mt-1">
+          <GrillaProductos productos={productos} />
+        </div>
+      ) : (
+        <SinProductos conLinkATodos />
+      )}
     </div>
   );
 }
 
 function ListadoCargando() {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3 md:gap-4">
       <Skeleton className="h-4 w-32" />
       <Skeleton className="h-8 w-48" />
+      <Skeleton className="h-9 w-64" />
       <GrillaProductosCargando />
     </div>
   );

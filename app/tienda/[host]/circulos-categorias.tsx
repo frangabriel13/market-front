@@ -5,7 +5,8 @@ import { categoriasALaVista } from "./categorias";
 import { obtenerCategorias, obtenerFotoDeCategoria } from "./datos";
 import { rutaCategoria } from "./rutas";
 
-const CIRCULO = "relative block size-16 overflow-hidden rounded-full bg-muted md:size-22";
+const CIRCULO =
+  "relative block size-16 overflow-hidden rounded-full bg-muted ring-offset-2 transition-shadow group-hover:ring-1 group-hover:ring-foreground md:size-22";
 
 export async function CirculosCategorias({ host }: { host: string }) {
   const lista = categoriasALaVista(await obtenerCategorias(host));
