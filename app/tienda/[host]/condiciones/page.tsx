@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { obtenerMarca } from "../datos";
 import { PaginaTexto, Seccion } from "../pagina-texto";
+import { RUTA_CONDICIONES } from "../rutas";
 
 export const metadata: Metadata = {
   title: "Condiciones de venta",
@@ -10,7 +11,7 @@ export default function CondicionesPage({
   params,
 }: PageProps<"/tienda/[host]/condiciones">) {
   return (
-    <PaginaTexto titulo="Condiciones de venta">
+    <PaginaTexto titulo="Condiciones de venta" ruta={RUTA_CONDICIONES}>
       <Condiciones params={params} />
     </PaginaTexto>
   );

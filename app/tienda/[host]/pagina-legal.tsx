@@ -1,13 +1,20 @@
 import { formatearFecha } from "@/lib/formato";
-import { ETIQUETAS_TEXTO_LEGAL, type TipoTextoLegal } from "@/lib/schemas/legales";
+import {
+  ETIQUETAS_TEXTO_LEGAL,
+  type TipoTextoLegal,
+} from "@/lib/schemas/legales";
 import { obtenerTextoLegal } from "./datos";
+import { RUTAS_LEGALES } from "./rutas";
 import { PaginaTexto, Seccion } from "./pagina-texto";
 
 type Props = { tipo: TipoTextoLegal; params: Promise<{ host: string }> };
 
 export function PaginaLegal({ tipo, params }: Props) {
   return (
-    <PaginaTexto titulo={ETIQUETAS_TEXTO_LEGAL[tipo]}>
+    <PaginaTexto
+      titulo={ETIQUETAS_TEXTO_LEGAL[tipo]}
+      ruta={RUTAS_LEGALES[tipo]}
+    >
       <TextoLegal tipo={tipo} params={params} />
     </PaginaTexto>
   );
