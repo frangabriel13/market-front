@@ -2,7 +2,7 @@
 
 import { Minus, Plus } from "lucide-react";
 import Link from "next/link";
-import { useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useState, type ReactNode } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { Button } from "@/components/ui/button";
 import { useHidratado } from "@/hooks/use-hidratado";
@@ -10,15 +10,14 @@ import { CANTIDAD_MAXIMA, useCarrito, type ItemCarrito } from "@/lib/carrito";
 import { formatearPrecio } from "@/lib/formato";
 import { SIN_VALOR, type VarianteProducto } from "@/lib/schemas/productos";
 import { cn } from "@/lib/utils";
-import {
-  descripcionVariante,
-  MAXIMO_TALLES_EN_GRILLA,
-} from "@/lib/variantes";
+import { descripcionVariante, MAXIMO_TALLES_EN_GRILLA } from "@/lib/variantes";
 import { RUTA_CARRITO } from "../../rutas";
 
 type Props = {
   producto: Omit<ItemCarrito, "color" | "talle" | "cantidad">;
   variantes: VarianteProducto[];
+  // Link a la guía de talles, al lado del título.
+  guia: ReactNode;
 };
 
 const clave = (color: string, talle: string) => `${color}\u0000${talle}`;
@@ -35,20 +34,24 @@ function titulo(conColores: boolean, conTalles: boolean) {
 // La grilla muestra lo que ya hay en el pedido de este producto; al guardar,
 // lo reemplaza. Las variantes llegan en el orden de las listas de la marca.
 // Sin colores o sin talles, llevan SIN_VALOR y esa parte no se muestra.
-export function ElegirCantidades({ producto, variantes }: Props) {
+export function ElegirCantidades({ producto, variantes, guia }: Props) {
   const colores = [...new Set(variantes.map((v) => v.color))];
   const talles = [...new Set(variantes.map((v) => v.talle))];
   const conColores = colores.some((color) => color !== SIN_VALOR);
   const conTalles = talles.some((talle) => talle !== SIN_VALOR);
   const hay = (color: string, talle: string) =>
-    variantes.some((v) => v.color === color && v.talle === talle && v.disponible);
+    variantes.some(
+      (v) => v.color === color && v.talle === talle && v.disponible,
+    );
 
   const enPedido = useCarrito(
     useShallow(({ items }) =>
       items.filter((item) => item.productoId === producto.productoId),
     ),
   );
-  const reemplazarProducto = useCarrito((carrito) => carrito.reemplazarProducto);
+  const reemplazarProducto = useCarrito(
+    (carrito) => carrito.reemplazarProducto,
+  );
   const hidratado = useHidratado();
   const [elegidas, setElegidas] = useState<Record<string, number> | null>(null);
   const [aviso, setAviso] = useState<string | null>(null);
@@ -72,7 +75,8 @@ export function ElegirCantidades({ producto, variantes }: Props) {
   const cantidad = (color: string, talle: string) =>
     hay(color, talle) ? (cantidades[clave(color, talle)] ?? 0) : 0;
   const total = colores.reduce(
-    (suma, color) => suma + talles.reduce((s, talle) => s + cantidad(color, talle), 0),
+    (suma, color) =>
+      suma + talles.reduce((s, talle) => s + cantidad(color, talle), 0),
     0,
   );
   const yaEnPedido = hidratado && enPedido.length > 0;
@@ -110,7 +114,7 @@ export function ElegirCantidades({ producto, variantes }: Props) {
 
   if (!colores.some((color) => talles.some((talle) => hay(color, talle)))) {
     return (
-      <p className="bg-muted p-3 text-sm">
+      <p className="bg-muted p-4 text-sm">
         {conColores || conTalles
           ? "Este producto está agotado en todos sus colores y talles."
           : "Este producto está agotado."}
@@ -142,9 +146,10 @@ export function ElegirCantidades({ producto, variantes }: Props) {
 
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="titulo-seccion">
-        {titulo(conColores, conTalles)}
-      </h2>
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="titulo-seccion">{titulo(conColores, conTalles)}</h2>
+        {guia}
+      </div>
       {enBloques && (
         <div className="flex flex-col md:hidden">
           {colores.map((color) => (
@@ -224,32 +229,35 @@ export function ElegirCantidades({ producto, variantes }: Props) {
           </button>
         )}
       </div>
-      <p
-        aria-live="polite"
-        className="flex items-baseline justify-between border-t pt-3"
-      >
-        <span>
-          Total: <strong>{unidades(total)}</strong>
-        </span>
-        <strong className="text-lg">
-          {formatearPrecio(total * producto.precio)}
-        </strong>
-      </p>
-      <Button
-        size="lg"
-        disabled={elegidas === null || (total === 0 && !yaEnPedido)}
-        onClick={guardar}
-      >
-        {yaEnPedido ? "Actualizar pedido" : "Agregar al pedido"}
-      </Button>
-      {aviso && (
-        <p role="status" className="text-sm text-success">
-          {aviso}{" "}
-          <Link href={RUTA_CARRITO} className="font-bold underline">
-            Ver pedido
-          </Link>
+      {/* En el celular queda abajo de la pantalla mientras se recorre la grilla. */}
+      <div className="sticky bottom-0 z-10 -mx-4 flex flex-col gap-2.5 border-t bg-background px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:static md:mx-0 md:px-0 md:pb-0">
+        <p
+          aria-live="polite"
+          className="flex items-baseline justify-between text-sm"
+        >
+          <span>
+            Total: <strong>{unidades(total)}</strong>
+          </span>
+          <strong className="text-base">
+            {formatearPrecio(total * producto.precio)}
+          </strong>
         </p>
-      )}
+        <Button
+          size="lg"
+          disabled={elegidas === null || (total === 0 && !yaEnPedido)}
+          onClick={guardar}
+        >
+          {yaEnPedido ? "Actualizar pedido" : "Agregar al pedido"}
+        </Button>
+        {aviso && (
+          <p role="status" className="text-sm text-success">
+            {aviso}{" "}
+            <Link href={RUTA_CARRITO} className="font-bold underline">
+              Ver pedido
+            </Link>
+          </p>
+        )}
+      </div>
     </section>
   );
 }

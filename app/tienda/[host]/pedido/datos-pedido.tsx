@@ -2,6 +2,8 @@
 
 import "@/lib/zod-es";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ImageIcon, Loader2 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { unstable_rethrow, useRouter } from "next/navigation";
 import { useLayoutEffect, useState } from "react";
@@ -15,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useHidratado } from "@/hooks/use-hidratado";
 import {
+  agruparPorProducto,
   totalDe,
   unidadesDe,
   useCarrito,
@@ -34,7 +37,7 @@ import {
 } from "@/lib/schemas/pedidos";
 import type { MarcaTienda } from "@/lib/schemas/tienda";
 import { descripcionVariante } from "@/lib/variantes";
-import { RUTA_CARRITO, RUTA_PEDIDO_LISTO } from "../rutas";
+import { RUTA_CARRITO, RUTA_PEDIDO_LISTO, RUTA_PRODUCTOS } from "../rutas";
 import { crearPedido } from "./acciones";
 
 type Props = { marca: MarcaTienda };
@@ -52,17 +55,27 @@ export function DatosPedido({ marca }: Props) {
 
   if (!useHidratado()) return <Skeleton className="h-40 w-full" />;
   if (enviado) {
-    return <p className="text-sm text-muted-foreground">Abriendo tu pedido…</p>;
+    return (
+      <p className="flex items-center gap-2 py-12 text-sm text-muted-foreground">
+        <Loader2 className="size-4 animate-spin" />
+        Abriendo tu pedido…
+      </p>
+    );
   }
 
   if (items.length === 0) {
-    return <SinPedido texto="Tu pedido está vacío." volver={["/", "Ver productos"]} />;
+    return (
+      <SinPedido
+        titulo="Tu pedido está vacío"
+        volver={[RUTA_PRODUCTOS, "Ver productos"]}
+      />
+    );
   }
   if (totalDe(items) < marca.minimoCompra) {
     const minimo = formatearPrecio(marca.minimoCompra);
     return (
       <SinPedido
-        texto={`Tu pedido no llega a la compra mínima de ${minimo}.`}
+        titulo={`Tu pedido no llega a la compra mínima de ${minimo}`}
         volver={[RUTA_CARRITO, "Volver al pedido"]}
       />
     );
@@ -70,7 +83,7 @@ export function DatosPedido({ marca }: Props) {
 
   if (marca.opcionesEntrega.length === 0) {
     return (
-      <p className="py-12 text-center text-sm text-muted-foreground">
+      <p className="mx-auto max-w-sm py-16 text-center text-sm text-muted-foreground">
         Esta tienda todavía no tiene formas de entrega. Escribile por WhatsApp
         para hacer tu pedido.
       </p>
@@ -87,16 +100,16 @@ export function DatosPedido({ marca }: Props) {
 }
 
 function SinPedido({
-  texto,
+  titulo,
   volver: [href, textoLink],
 }: {
-  texto: string;
+  titulo: string;
   volver: [string, string];
 }) {
   return (
-    <div className="flex flex-col items-center gap-4 py-12 text-center">
-      <p className="text-sm text-muted-foreground">{texto}</p>
-      <Button asChild variant="outline">
+    <div className="flex flex-col items-center gap-4 py-16 text-center">
+      <p className="titulo-seccion max-w-xs">{titulo}</p>
+      <Button asChild>
         <Link href={href}>{textoLink}</Link>
       </Button>
     </div>
@@ -175,121 +188,123 @@ function FormularioPedido({
         );
         return form.handleSubmit(enviar)(evento);
       }}
-      className="flex flex-col gap-8"
+      className="flex flex-col gap-8 md:grid md:grid-cols-[1fr_20rem] md:items-start md:gap-10"
     >
-      <CampoOpciones
-        control={form.control}
-        name="opcionEntregaId"
-        titulo="Entrega"
-        opciones={opcionesEntrega(marca)}
-        onElegir={(id) => {
-          const opcion = marca.opcionesEntrega.find((o) => o.id === id);
-          if (opcion) form.setValue("tipoEntrega", opcion.tipo);
-        }}
-      />
+      <div className="flex flex-col gap-8 [&>section+section]:border-t [&>section+section]:pt-6">
+        <section>
+          <CampoOpciones
+            control={form.control}
+            name="opcionEntregaId"
+            titulo="Entrega"
+            opciones={opcionesEntrega(marca)}
+            onElegir={(id) => {
+              const opcion = marca.opcionesEntrega.find((o) => o.id === id);
+              if (opcion) form.setValue("tipoEntrega", opcion.tipo);
+            }}
+          />
+        </section>
 
-      <section className="flex flex-col gap-4">
-        <h2 className="titulo-seccion">Tus datos</h2>
-        <CampoTexto
-          control={form.control}
-          name="nombre"
-          label="Nombre completo"
-          autoComplete="name"
-          maxLength={80}
-        />
-        <CampoTexto
-          control={form.control}
-          name="telefono"
-          label="Celular"
-          descripcion="Con característica. Te escriben por WhatsApp a este número."
-          type="tel"
-          inputMode="tel"
-          autoComplete="tel"
-        />
-      </section>
-
-      {tipoEntrega === "ENVIO" && (
         <section className="flex flex-col gap-4">
-          <h2 className="titulo-seccion">
-            Datos para el envío
-          </h2>
-          <div className="grid grid-cols-2 gap-3">
-            <CampoTexto
-              control={form.control}
-              name="dni"
-              label="DNI"
-              inputMode="numeric"
-            />
-            <CampoTexto
-              control={form.control}
-              name="cuit"
-              label="CUIT (opcional)"
-              inputMode="numeric"
-            />
-          </div>
+          <h2 className="titulo-seccion">Tus datos</h2>
           <CampoTexto
             control={form.control}
-            name="direccion"
-            label="Dirección"
-            descripcion="Calle y altura. Si hace falta, piso y depto."
-            autoComplete="street-address"
-            maxLength={200}
+            name="nombre"
+            label="Nombre completo"
+            autoComplete="name"
+            maxLength={80}
           />
-          <div className="grid grid-cols-[1fr_7.5rem] gap-3">
+          <CampoTexto
+            control={form.control}
+            name="telefono"
+            label="Celular"
+            descripcion="Con característica. Te escriben por WhatsApp a este número."
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+          />
+        </section>
+
+        {tipoEntrega === "ENVIO" && (
+          <section className="flex flex-col gap-4">
+            <h2 className="titulo-seccion">Datos para el envío</h2>
+            <div className="grid grid-cols-2 gap-3">
+              <CampoTexto
+                control={form.control}
+                name="dni"
+                label="DNI"
+                inputMode="numeric"
+              />
+              <CampoTexto
+                control={form.control}
+                name="cuit"
+                label="CUIT (opcional)"
+                inputMode="numeric"
+              />
+            </div>
             <CampoTexto
               control={form.control}
-              name="localidad"
-              label="Localidad"
-              autoComplete="address-level2"
+              name="direccion"
+              label="Dirección"
+              descripcion="Calle y altura. Si hace falta, piso y depto."
+              autoComplete="street-address"
+              maxLength={200}
+            />
+            <div className="grid grid-cols-[1fr_7.5rem] gap-3">
+              <CampoTexto
+                control={form.control}
+                name="localidad"
+                label="Localidad"
+                autoComplete="address-level2"
+                maxLength={100}
+              />
+              <CampoTexto
+                control={form.control}
+                name="codigoPostal"
+                label="Código postal"
+                autoComplete="postal-code"
+                maxLength={10}
+              />
+            </div>
+            <CampoLista
+              control={form.control}
+              name="provincia"
+              label="Provincia"
+              placeholder="Elegí la provincia"
+              opciones={PROVINCIAS}
+              autoComplete="address-level1"
+            />
+            <CampoTexto
+              control={form.control}
+              name="transporte"
+              label="Expreso o agencia (opcional)"
+              placeholder="El transporte que prefieras"
               maxLength={100}
             />
             <CampoTexto
               control={form.control}
-              name="codigoPostal"
-              label="Código postal"
-              autoComplete="postal-code"
-              maxLength={10}
+              name="observaciones"
+              label="Notas del pedido (opcional)"
+              multilinea
+              maxLength={500}
             />
-          </div>
-          <CampoLista
+          </section>
+        )}
+
+        <section>
+          <CampoOpciones
             control={form.control}
-            name="provincia"
-            label="Provincia"
-            placeholder="Elegí la provincia"
-            opciones={PROVINCIAS}
-            autoComplete="address-level1"
-          />
-          <CampoTexto
-            control={form.control}
-            name="transporte"
-            label="Expreso o agencia (opcional)"
-            placeholder="El transporte que prefieras"
-            maxLength={100}
-          />
-          <CampoTexto
-            control={form.control}
-            name="observaciones"
-            label="Notas del pedido (opcional)"
-            multilinea
-            maxLength={500}
+            name="formaPago"
+            titulo="Forma de pago"
+            descripcion="No pagás ahora: lo coordinás por WhatsApp con la marca."
+            opciones={OPCIONES_PAGO}
+            className="grid grid-cols-2"
           />
         </section>
-      )}
 
-      <CampoOpciones
-        control={form.control}
-        name="formaPago"
-        titulo="Forma de pago"
-        descripcion="No pagás ahora: lo coordinás por WhatsApp con la marca."
-        opciones={OPCIONES_PAGO}
-        className="grid grid-cols-2"
-      />
-
-      <div className="flex flex-col gap-3">
         {sinStock.length > 0 ? (
           <div
             role="alert"
-            className="flex flex-col gap-3 border border-destructive/30 bg-destructive/5 px-3 py-2.5 text-sm text-destructive"
+            className="flex flex-col gap-3 border-l-2 border-destructive bg-destructive/5 px-3 py-2.5 text-sm text-destructive"
           >
             <p className="font-bold">{error}:</p>
             <ul className="list-inside list-disc">
@@ -318,12 +333,50 @@ function FormularioPedido({
           error && <ErrorFormulario>{error}</ErrorFormulario>
         )}
       </div>
-      <div className="sticky bottom-0 flex flex-col gap-3 border-t bg-background py-4">
-        <p className="flex items-baseline justify-between">
+      {/* Celular: total y botón fijos abajo. Escritorio: resumen al costado. */}
+      <div className="sticky bottom-0 z-10 -mx-4 flex flex-col gap-3 border-t bg-background px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:top-24 md:bottom-auto md:mx-0 md:border md:p-5">
+        <div className="hidden items-baseline justify-between md:flex">
+          <p className="titulo-seccion">Tu pedido</p>
+          <Link
+            href={RUTA_CARRITO}
+            className="text-[13px] font-semibold underline underline-offset-4 hover:no-underline"
+          >
+            Cambiar
+          </Link>
+        </div>
+        <ul className="hidden max-h-72 flex-col gap-3 overflow-y-auto md:flex">
+          {agruparPorProducto(items).map((producto) => (
+            <li key={producto.productoId} className="flex gap-3 text-[13px]">
+              <span className="relative aspect-[3/4] w-12 shrink-0 overflow-hidden bg-muted">
+                {producto.miniatura ? (
+                  <Image
+                    src={producto.miniatura}
+                    alt=""
+                    fill
+                    unoptimized
+                    className="object-cover"
+                  />
+                ) : (
+                  <ImageIcon className="absolute inset-0 m-auto size-4 text-muted-foreground" />
+                )}
+              </span>
+              <span className="flex min-w-0 flex-1 flex-col">
+                <span className="truncate font-semibold">
+                  {producto.nombre}
+                </span>
+                <span className="text-muted-foreground">
+                  {unidadesDe(producto.items)} ×{" "}
+                  {formatearPrecio(producto.precio)}
+                </span>
+              </span>
+            </li>
+          ))}
+        </ul>
+        <p className="flex items-baseline justify-between text-sm md:border-t md:pt-3">
           <span>
-            {unidades} {unidades === 1 ? "unidad" : "unidades"}
+            Total · {unidades} {unidades === 1 ? "unidad" : "unidades"}
           </span>
-          <strong className="text-2xl font-black">
+          <strong className="text-2xl font-extrabold">
             {formatearPrecio(totalDe(items))}
           </strong>
         </p>
@@ -332,6 +385,7 @@ function FormularioPedido({
           size="lg"
           variant="success"
           disabled={form.formState.isSubmitting}
+          className="h-auto min-h-12 py-3 whitespace-normal"
         >
           <IconoWhatsapp />
           {form.formState.isSubmitting

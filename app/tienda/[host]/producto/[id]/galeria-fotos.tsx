@@ -27,40 +27,52 @@ export function GaleriaFotos({ fotos, nombre }: Props) {
 
   return (
     <div className="flex flex-col gap-2">
-      <ul
-        ref={lista}
-        className="flex aspect-[3/4] snap-x snap-mandatory overflow-x-auto bg-muted [scrollbar-width:none]"
-        onScroll={(e) => {
-          const { scrollLeft, clientWidth } = e.currentTarget;
-          setActual(Math.round(scrollLeft / clientWidth));
-        }}
-      >
-        {fotos.map((foto, i) => (
-          <li key={foto.url} className="relative w-full shrink-0 snap-center">
-            <Image
-              src={foto.url}
-              alt={`${nombre}, foto ${i + 1} de ${fotos.length}`}
-              fill
-              unoptimized
-              preload={i === 0}
-              loading={i === 0 ? undefined : "lazy"}
-              className="object-cover"
-            />
-          </li>
-        ))}
-      </ul>
-      {fotos.length > 1 && (
-        <ul className="flex gap-2 overflow-x-auto px-4 [scrollbar-width:none] md:px-0">
+      <div className="relative">
+        <ul
+          ref={lista}
+          className="flex aspect-[3/4] snap-x snap-mandatory overflow-x-auto bg-muted [scrollbar-width:none]"
+          onScroll={(e) => {
+            const { scrollLeft, clientWidth } = e.currentTarget;
+            setActual(Math.round(scrollLeft / clientWidth));
+          }}
+        >
           {fotos.map((foto, i) => (
-            <li key={foto.url} className="w-[calc((100%-1.5rem)/4)] shrink-0">
+            <li key={foto.url} className="relative w-full shrink-0 snap-center">
+              <Image
+                src={foto.url}
+                alt={`${nombre}, foto ${i + 1} de ${fotos.length}`}
+                fill
+                unoptimized
+                preload={i === 0}
+                loading={i === 0 ? undefined : "lazy"}
+                className="object-cover"
+              />
+            </li>
+          ))}
+        </ul>
+        {fotos.length > 1 && (
+          <span
+            aria-hidden="true"
+            className="absolute right-3 bottom-3 rounded-full bg-foreground/75 px-2.5 py-1 text-xs font-semibold text-background tabular-nums"
+          >
+            {actual + 1} / {fotos.length}
+          </span>
+        )}
+      </div>
+      {fotos.length > 1 && (
+        <ul className="flex gap-1.5 overflow-x-auto px-4 [scrollbar-width:none] md:px-0">
+          {fotos.map((foto, i) => (
+            <li key={foto.url} className="w-14 shrink-0 md:w-16">
               <button
                 type="button"
                 onClick={() => irA(i)}
                 aria-label={`Ver foto ${i + 1}`}
                 aria-current={i === actual}
                 className={cn(
-                  "relative block aspect-square w-full overflow-hidden border-2 bg-muted",
-                  i === actual ? "border-foreground" : "border-transparent",
+                  "relative block aspect-[3/4] w-full overflow-hidden bg-muted after:pointer-events-none after:absolute after:inset-0 after:z-10",
+                  i === actual
+                    ? "after:border-2 after:border-foreground"
+                    : "after:border after:border-border hover:after:border-foreground/40",
                 )}
               >
                 <Image

@@ -16,15 +16,15 @@ export function GuiaTalles({ url }: { url: string }) {
       <SheetTrigger asChild>
         <button
           type="button"
-          className="flex w-full items-center justify-between border-b py-3 titulo-seccion"
+          className="-my-2 flex shrink-0 items-center gap-1.5 py-2 text-[13px] font-semibold underline-offset-4 hover:underline"
         >
-          Guía de talles
           <Ruler className="size-4" />
+          Guía de talles
         </button>
       </SheetTrigger>
       <SheetContent side="bottom" className="max-h-[85dvh] gap-0" aria-describedby={undefined}>
-        <SheetHeader className="border-b">
-          <SheetTitle className="font-bold uppercase">Guía de talles</SheetTitle>
+        <SheetHeader>
+          <SheetTitle>Guía de talles</SheetTitle>
         </SheetHeader>
         <div className="overflow-y-auto p-4">
           <Image

@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { categoriasALaVista } from "./categorias";
-import { obtenerCategorias, obtenerFotoDeCategoria } from "./datos";
+import { obtenerCategorias } from "./datos";
 import { rutaCategoria } from "./rutas";
 
 const CIRCULO =
@@ -11,9 +11,6 @@ const CIRCULO =
 export async function CirculosCategorias({ host }: { host: string }) {
   const lista = categoriasALaVista(await obtenerCategorias(host));
   if (lista.length === 0) return null;
-  const fotos = await Promise.all(
-    lista.map((c) => obtenerFotoDeCategoria(host, c.slug)),
-  );
 
   return (
     <nav
@@ -21,16 +18,16 @@ export async function CirculosCategorias({ host }: { host: string }) {
       className="-mx-4 overflow-x-auto px-4 [scrollbar-width:none]"
     >
       <ul className="flex gap-3 md:justify-center md:gap-8">
-        {lista.map((categoria, i) => (
+        {lista.map((categoria) => (
           <li key={categoria.slug}>
             <Link
               href={rutaCategoria(categoria.slug)}
               className="group flex w-18 flex-col items-center gap-1.5 text-center text-xs font-semibold md:w-24 md:text-sm"
             >
               <span className={CIRCULO}>
-                {fotos[i] ? (
+                {categoria.miniatura ? (
                   <Image
-                    src={fotos[i]}
+                    src={categoria.miniatura}
                     alt=""
                     fill
                     unoptimized
