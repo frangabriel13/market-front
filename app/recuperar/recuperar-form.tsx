@@ -1,11 +1,13 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { MailCheck } from "lucide-react";
 import Link from "next/link";
 import { useLayoutEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { CampoTexto } from "@/components/form/campo-texto";
 import { ErrorFormulario } from "@/components/form/error-formulario";
+import { AvisoListo } from "@/components/aviso-listo";
 import { Button } from "@/components/ui/button";
 import { recuperarSchema, type RecuperarInput } from "@/lib/schemas/auth";
 import { pedirLink } from "./acciones";
@@ -35,11 +37,11 @@ export function RecuperarForm() {
   if (enviado) {
     return (
       <div className="flex flex-col gap-5">
-        <p role="status" className="border bg-secondary px-3 py-2.5 text-sm">
+        <AvisoListo Icono={MailCheck}>
           Si <strong>{form.getValues("email")}</strong> tiene una cuenta, te
           mandamos un link para elegir una contraseña nueva. Vence en 1 hora:
           revisá también la carpeta de spam.
-        </p>
+        </AvisoListo>
         <Button asChild variant="outline" size="lg">
           <Link href="/login">Volver a ingresar</Link>
         </Button>

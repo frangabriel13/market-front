@@ -39,7 +39,7 @@ export function OpcionesEntrega({ marcaId, opciones }: Props) {
   }
 
   return (
-    <section className="mb-8 flex flex-col gap-4">
+    <section className="flex flex-col gap-4">
       <div>
         <h2 className="titulo-seccion">Opciones de entrega</h2>
         <p className="text-sm text-muted-foreground">
@@ -78,8 +78,8 @@ export function OpcionesEntrega({ marcaId, opciones }: Props) {
         </p>
       )}
 
-      <div className="border p-4">
-        <p className="mb-3 text-sm font-medium">Agregar opción</p>
+      <div className="border border-dashed border-input p-4">
+        <p className="mb-3 text-sm font-semibold">Agregar opción</p>
         <OpcionEntregaForm
           textoBoton="Agregar"
           onGuardar={(datos) => crearOpcion(marcaId, datos)}
@@ -153,7 +153,11 @@ function OpcionFila({
             disabled={deshabilitada}
             aria-label={`Acciones de ${opcion.nombre}`}
           >
-            {deshabilitada ? <Loader2 className="animate-spin" /> : <MoreVertical />}
+            {deshabilitada ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              <MoreVertical />
+            )}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">

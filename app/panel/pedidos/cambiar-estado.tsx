@@ -29,7 +29,7 @@ export function CambiarEstado({ pedidoId, estado }: Props) {
 
   return (
     <fieldset>
-      <legend className="mb-2 text-sm font-bold">Estado</legend>
+      <legend className="titulo-seccion mb-3">Estado</legend>
       <div className="flex flex-wrap gap-2">
         {ESTADOS_PEDIDO.map((opcion) => (
           <button
@@ -38,10 +38,10 @@ export function CambiarEstado({ pedidoId, estado }: Props) {
             aria-pressed={opcion === estadoOptimista}
             onClick={() => opcion !== estadoOptimista && cambiar(opcion)}
             className={cn(
-              "h-9 border px-3 text-sm",
+              "h-10 border px-3.5 text-sm font-semibold transition-colors",
               opcion === estadoOptimista
-                ? "border-foreground bg-foreground font-bold text-background"
-                : "border-border hover:border-foreground",
+                ? "border-foreground bg-foreground text-background"
+                : "border-input hover:border-foreground",
             )}
           >
             {ETIQUETAS_ESTADO_PEDIDO[opcion]}

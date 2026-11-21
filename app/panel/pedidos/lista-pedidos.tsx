@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronRight, ReceiptText } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { formatearPrecio } from "@/lib/formato";
@@ -17,9 +18,17 @@ export function ListaPedidos({ pedidos }: { pedidos: Tarjeta[] }) {
 
   if (pedidos.length === 0) {
     return (
-      <p className="py-10 text-center text-sm text-muted-foreground">
-        Todavía no recibiste pedidos.
-      </p>
+      <div className="flex flex-col items-center gap-2 py-12 text-center">
+        <ReceiptText
+          className="size-10 text-muted-foreground"
+          strokeWidth={1.5}
+        />
+        <p className="titulo-seccion">Todavía no recibiste pedidos</p>
+        <p className="max-w-xs text-sm text-muted-foreground">
+          Cuando alguien arme un pedido en tu tienda, aparece acá aunque no te
+          haya escrito por WhatsApp.
+        </p>
+      </div>
     );
   }
 
@@ -35,11 +44,11 @@ export function ListaPedidos({ pedidos }: { pedidos: Tarjeta[] }) {
         </Filtro>
       </div>
       {visibles.length === 0 ? (
-        <p className="py-10 text-center text-sm text-muted-foreground">
+        <p className="py-12 text-center text-sm text-muted-foreground">
           No tenés pedidos nuevos.
         </p>
       ) : (
-        <ul className="flex flex-col gap-3">
+        <ul className="flex flex-col gap-2">
           {visibles.map((pedido) => (
             <li key={pedido.id}>
               <TarjetaPedido pedido={pedido} />
@@ -66,10 +75,10 @@ function Filtro({
       aria-pressed={activo}
       onClick={onClick}
       className={cn(
-        "h-12 border px-5 text-sm font-bold",
+        "h-10 border px-4 text-sm font-semibold transition-colors",
         activo
           ? "border-foreground bg-foreground text-background"
-          : "border-input bg-background",
+          : "border-input bg-background hover:border-foreground",
       )}
     >
       {children}
@@ -79,36 +88,35 @@ function Filtro({
 
 function TarjetaPedido({ pedido }: { pedido: Tarjeta }) {
   const nuevo = pedido.estado === "NUEVO";
+  // Toda la tarjeta lleva al detalle; los nuevos, con una raya a la izquierda.
   return (
-    <article
+    <Link
+      href={`/panel/pedidos/${pedido.id}`}
       className={cn(
-        "flex flex-col gap-1 bg-background p-4",
-        nuevo ? "border-2 border-foreground" : "border",
+        "flex items-center gap-3 border bg-background p-4 transition-colors hover:border-foreground/30",
+        nuevo && "border-l-4 border-l-foreground",
       )}
     >
-      <div className="flex items-start justify-between gap-3">
-        <h2 className="text-lg font-bold">
-          Pedido {numeroDePedido(pedido.numero)}
-        </h2>
-        <EstadoPedidoEtiqueta estado={pedido.estado} />
+      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="font-bold">Pedido {numeroDePedido(pedido.numero)}</h2>
+          <EstadoPedidoEtiqueta estado={pedido.estado} />
+        </div>
+        <p className="truncate text-sm">{pedido.compradorNombre}</p>
+        <p className="text-sm">
+          <span className="font-bold">{formatearPrecio(pedido.total)}</span>
+          <span className="text-muted-foreground">
+            {" "}
+            · {pedido.unidades} {pedido.unidades === 1 ? "unidad" : "unidades"}
+          </span>
+        </p>
+        <p className="truncate text-xs text-muted-foreground">
+          {[pedido.cuando, pedido.entrega, pedido.localidad]
+            .filter(Boolean)
+            .join(" · ")}
+        </p>
       </div>
-      <p className="text-sm text-muted-foreground">{pedido.cuando}</p>
-      <p className="truncate">{pedido.compradorNombre}</p>
-      <p className="font-bold">
-        {formatearPrecio(pedido.total)}{" "}
-        <span className="font-normal text-muted-foreground">
-          · {pedido.unidades} {pedido.unidades === 1 ? "unidad" : "unidades"}
-        </span>
-      </p>
-      <p className="text-sm text-muted-foreground">
-        {[pedido.entrega, pedido.localidad].filter(Boolean).join(" · ")}
-      </p>
-      <Link
-        href={`/panel/pedidos/${pedido.id}`}
-        className="mt-2 self-start text-sm font-bold underline underline-offset-4"
-      >
-        Ver detalle
-      </Link>
-    </article>
+      <ChevronRight className="size-5 shrink-0 text-muted-foreground" />
+    </Link>
   );
 }

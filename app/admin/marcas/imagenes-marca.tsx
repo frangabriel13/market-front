@@ -18,7 +18,8 @@ const IMAGENES: {
     tipo: "logo",
     campo: "logoUrl",
     titulo: "Logo",
-    descripcion: "Se muestra tal cual sobre el encabezado oscuro. Mejor en PNG con fondo transparente.",
+    descripcion:
+      "Se muestra tal cual sobre el encabezado oscuro. Mejor en PNG con fondo transparente.",
     marco: "aspect-square",
   },
   {
@@ -35,7 +36,7 @@ export function ImagenesMarca({ marca }: { marca: Marca }) {
     editarMarca(marca.id, { [campo]: url });
 
   return (
-    <section className="mb-8 flex flex-col gap-4">
+    <section className="flex flex-col gap-4">
       <h2 className="titulo-seccion">Imágenes</h2>
       {IMAGENES.map(({ tipo, campo, ...imagen }) => (
         <CampoImagen

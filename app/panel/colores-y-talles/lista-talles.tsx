@@ -37,30 +37,36 @@ export function ListaTalles({ lista, otras }: Props) {
     editarListaTalles(lista.id, datos);
 
   return (
-    <section className="flex flex-col gap-4 border bg-background p-4">
-      <Encabezado lista={lista} otras={otras} />
+    <section className="flex flex-col gap-4 border bg-background px-4 pb-4">
+      <div className="-mx-4 -mb-4 border-b px-4 pt-4 pb-3">
+        <Encabezado lista={lista} otras={otras} />
+      </div>
       <EditorValores
         nombre="talle"
         placeholder="Ej. M"
         valores={lista.talles}
         onGuardar={(talles) => editar({ talles })}
       />
-      <CampoImagen
-        titulo="Guía de talles"
-        descripcion="Una imagen con la tabla de medidas. Se ve en los productos de esta lista."
-        marco="aspect-[3/4]"
-        url={lista.guiaTallesUrl}
-        subir={async (archivo) => {
-          const subida = await subirImagen(archivo, (datos) =>
-            pedirUrlDeGuia(lista.id, datos),
-          );
-          return "error" in subida
-            ? subida
-            : editar({ guiaTallesUrl: subida.url });
-        }}
-        quitar={() => editar({ guiaTallesUrl: null })}
-      />
-      <BorrarLista lista={lista} />
+      <div className="border-t pt-4">
+        <CampoImagen
+          titulo="Guía de talles"
+          descripcion="Una imagen con la tabla de medidas. Se ve en los productos de esta lista."
+          marco="aspect-[3/4]"
+          url={lista.guiaTallesUrl}
+          subir={async (archivo) => {
+            const subida = await subirImagen(archivo, (datos) =>
+              pedirUrlDeGuia(lista.id, datos),
+            );
+            return "error" in subida
+              ? subida
+              : editar({ guiaTallesUrl: subida.url });
+          }}
+          quitar={() => editar({ guiaTallesUrl: null })}
+        />
+      </div>
+      <div className="border-t pt-4">
+        <BorrarLista lista={lista} />
+      </div>
     </section>
   );
 }
@@ -109,7 +115,7 @@ function Encabezado({ lista, otras }: Props) {
   return (
     <div className="flex items-start gap-2">
       <div className="min-w-0 flex-1">
-        <h3 className="truncate text-lg font-black">{lista.nombre}</h3>
+        <h3 className="truncate text-lg font-extrabold">{lista.nombre}</h3>
         <p className="text-sm text-muted-foreground">{uso}</p>
       </div>
       <Button
@@ -129,7 +135,7 @@ function BorrarLista({ lista }: { lista: ListaTallesPanel }) {
 
   if (lista.productos > 0) {
     return (
-      <p className="text-sm text-muted-foreground">
+      <p className="text-xs text-muted-foreground">
         Para borrar esta lista, primero cambiales la lista de talles a{" "}
         {lista.productos === 1
           ? "su producto"

@@ -1,5 +1,6 @@
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import type { ReactNode } from "react";
 
 type Props = {
@@ -11,20 +12,23 @@ type Props = {
 
 export function EncabezadoPagina({ titulo, volver, accion }: Props) {
   return (
-    <header className="border-b bg-background">
-      <div className="mx-auto flex w-full max-w-2xl items-center gap-3 px-4 py-3">
+    <header className="sticky top-0 z-30 border-b bg-background">
+      <div className="mx-auto flex min-h-16 w-full max-w-2xl items-center gap-2 px-4 py-2.5">
         {volver && (
-          <Link
-            href={volver}
-            aria-label="Volver"
-            className="-ml-2 flex size-10 shrink-0 items-center justify-center"
+          <Button
+            asChild
+            variant="ghost"
+            size="icon"
+            className="-ml-3 shrink-0"
           >
-            <ChevronLeft className="size-6" />
-          </Link>
+            <Link href={volver} aria-label="Volver">
+              <ChevronLeft className="size-6" />
+            </Link>
+          </Button>
         )}
         <div className="min-w-0 flex-1">
           {!volver && (
-            <p className="text-xs font-bold tracking-widest text-muted-foreground uppercase">
+            <p className="text-[11px] font-extrabold tracking-[0.14em] text-muted-foreground uppercase">
               Panel de tu marca
             </p>
           )}

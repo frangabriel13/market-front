@@ -14,6 +14,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAccion } from "@/hooks/use-accion";
 import { MAXIMO_FOTOS, type FotoProducto } from "@/lib/schemas/productos";
@@ -54,7 +55,9 @@ export function FotosProducto({ productoId, fotos }: Props) {
         pedirUrlDeFoto(productoId, datos),
       );
       const resultado =
-        "error" in subida ? subida : await registrarFoto(productoId, subida.url);
+        "error" in subida
+          ? subida
+          : await registrarFoto(productoId, subida.url);
       if (resultado) errores.push(`${archivo.name}: ${resultado.error}`);
     }
     setProgreso(undefined);
@@ -73,7 +76,7 @@ export function FotosProducto({ productoId, fotos }: Props) {
   return (
     <section className="flex flex-col gap-2">
       <div className="flex items-baseline justify-between">
-        <h2 className="text-sm font-semibold">Fotos</h2>
+        <h2 className="titulo-seccion">Fotos</h2>
         <p className="text-sm text-muted-foreground">
           {fotos.length} de {MAXIMO_FOTOS}
         </p>
@@ -95,7 +98,7 @@ export function FotosProducto({ productoId, fotos }: Props) {
         {fotos.map((foto, i) => (
           <li
             key={foto.id}
-            className="relative aspect-square overflow-hidden bg-muted"
+            className="relative aspect-[3/4] overflow-hidden bg-muted"
           >
             <Image
               src={foto.urlMiniatura}
@@ -105,9 +108,7 @@ export function FotosProducto({ productoId, fotos }: Props) {
               className="object-cover"
             />
             {i === 0 && (
-              <span className="absolute top-1 left-1 bg-foreground px-1.5 py-0.5 text-[10px] font-semibold text-background uppercase">
-                Principal
-              </span>
+              <Badge className="absolute top-1.5 left-1.5">Principal</Badge>
             )}
             <div className="absolute inset-x-0 bottom-0 flex justify-between bg-background/85">
               <Button

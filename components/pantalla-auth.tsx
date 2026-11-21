@@ -8,7 +8,7 @@ export function PantallaAuth({ titulo, descripcion, children }: Props) {
     <>
       <MarcaPlataforma />
       <main className="flex flex-1 flex-col items-center px-4 py-10 sm:justify-center">
-        <div className="w-full max-w-sm">
+        <div className="w-full max-w-sm sm:max-w-md sm:border sm:p-10">
           <h1 className="titulo">{titulo}</h1>
           {descripcion && (
             <p className="mt-2 text-sm text-muted-foreground">{descripcion}</p>

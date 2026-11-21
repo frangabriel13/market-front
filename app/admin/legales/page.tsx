@@ -13,7 +13,7 @@ export default function LegalesPage() {
   return (
     <>
       <h1 className="titulo">Textos legales</h1>
-      <p className="mb-6 text-sm text-muted-foreground">
+      <p className="mt-1 mb-6 text-sm text-muted-foreground">
         Son los mismos para todas las tiendas. Aparecen en el pie de cada una.
       </p>
       <Suspense fallback={<LegalesCargando />}>
@@ -26,7 +26,7 @@ export default function LegalesPage() {
 async function Legales() {
   const textos = await apiFetchConSesion<TextoLegal[]>("admin/legales");
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col gap-8 [&>*+*]:border-t [&>*+*]:pt-8">
       {textos.map((texto) => (
         <TextoLegalForm key={texto.tipo} texto={texto} />
       ))}

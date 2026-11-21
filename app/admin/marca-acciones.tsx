@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2, MoreVertical } from "lucide-react";
+import { ExternalLink, Loader2, MoreVertical } from "lucide-react";
 import { useState } from "react";
 import {
   AlertDialog,
@@ -23,7 +23,13 @@ import { useAccion } from "@/hooks/use-accion";
 import type { EstadoMarca, MarcaResumen } from "@/lib/schemas/marcas";
 import { cambiarEstadoMarca } from "./acciones";
 
-export function MarcaAcciones({ marca }: { marca: MarcaResumen }) {
+export function MarcaAcciones({
+  marca,
+  urlTienda,
+}: {
+  marca: MarcaResumen;
+  urlTienda: string;
+}) {
   const { pendiente, error, ejecutar } = useAccion();
   const [confirmarBaja, setConfirmarBaja] = useState(false);
 
@@ -41,10 +47,22 @@ export function MarcaAcciones({ marca }: { marca: MarcaResumen }) {
             disabled={pendiente}
             aria-label={`Acciones de ${marca.nombre}`}
           >
-            {pendiente ? <Loader2 className="animate-spin" /> : <MoreVertical />}
+            {pendiente ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              <MoreVertical />
+            )}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
+          {marca.estado === "ACTIVA" && (
+            <DropdownMenuItem asChild>
+              <a href={urlTienda} target="_blank" rel="noopener noreferrer">
+                <ExternalLink />
+                Ver tienda
+              </a>
+            </DropdownMenuItem>
+          )}
           {marca.estado === "ACTIVA" ? (
             <DropdownMenuItem onSelect={() => cambiarEstado("PAUSADA")}>
               Pausar tienda

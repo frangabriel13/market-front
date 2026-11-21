@@ -50,7 +50,7 @@ export function AccesoFabricanteSeccion({ marca }: { marca: Marca }) {
   }
 
   return (
-    <section className="mb-8 flex flex-col gap-4">
+    <section className="flex flex-col gap-4">
       <div>
         <h2 className="titulo-seccion">Acceso del fabricante</h2>
         <p className="text-sm text-muted-foreground">
@@ -152,8 +152,8 @@ function AccesoCreado({
   }
 
   return (
-    <div className="flex flex-col gap-3 border border-success/30 bg-success/5 p-4">
-      <p className="text-sm font-medium">
+    <div className="flex flex-col gap-3 border-l-2 border-success bg-success/5 p-4">
+      <p className="text-sm font-semibold">
         Copiá la contraseña ahora: no se vuelve a mostrar.
       </p>
       <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm">

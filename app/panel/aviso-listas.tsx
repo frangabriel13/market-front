@@ -14,15 +14,18 @@ export function sinListas({ colores, listasTalles }: ListasPanel) {
 
 export function AvisoListas() {
   return (
-    <div className="flex flex-col gap-3 border-2 border-foreground bg-background p-4">
-      <div>
-        <p className="font-black">Antes de tu primer producto</p>
-        <p className="text-sm text-muted-foreground">
-          Armá los colores y los talles de tu marca. Cada producto elige los
-          suyos de esas listas.
-        </p>
+    <div className="flex flex-col gap-3 border border-l-4 border-l-foreground bg-background p-4">
+      <div className="flex gap-3">
+        <Palette className="mt-0.5 size-5 shrink-0" />
+        <div className="flex flex-col gap-1">
+          <p className="titulo-seccion">Antes de tu primer producto</p>
+          <p className="text-sm text-muted-foreground">
+            Armá los colores y los talles de tu marca. Cada producto elige los
+            suyos de esas listas.
+          </p>
+        </div>
       </div>
-      <Button asChild className="self-start">
+      <Button asChild className="w-full sm:w-auto sm:self-start">
         <Link href={RUTA_LISTAS}>
           <Palette />
           Armar colores y talles

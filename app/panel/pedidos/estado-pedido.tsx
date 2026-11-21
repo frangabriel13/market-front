@@ -1,4 +1,7 @@
-import { ETIQUETAS_ESTADO_PEDIDO, type EstadoPedido } from "@/lib/schemas/pedidos";
+import {
+  ETIQUETAS_ESTADO_PEDIDO,
+  type EstadoPedido,
+} from "@/lib/schemas/pedidos";
 import { cn } from "@/lib/utils";
 
 export const ESTILOS_ESTADO: Record<EstadoPedido, string> = {
@@ -13,7 +16,7 @@ export function EstadoPedidoEtiqueta({ estado }: { estado: EstadoPedido }) {
   return (
     <span
       className={cn(
-        "inline-block border px-1.5 py-0.5 text-[11px] font-bold tracking-wide uppercase",
+        "inline-flex h-5 shrink-0 items-center border px-1.5 text-[11px] font-bold tracking-wider whitespace-nowrap uppercase",
         ESTILOS_ESTADO[estado],
       )}
     >

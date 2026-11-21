@@ -1,14 +1,17 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { CircleCheck } from "lucide-react";
 import Link from "next/link";
 import { useLayoutEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { CampoPassword } from "@/components/form/campo-password";
 import { ErrorFormulario } from "@/components/form/error-formulario";
+import { AvisoListo } from "@/components/aviso-listo";
 import { Button } from "@/components/ui/button";
 import { restablecerSchema, type RestablecerInput } from "@/lib/schemas/auth";
 import { restablecerPassword } from "./acciones";
+import { LinkVencido } from "./link-vencido";
 
 type Datos = { token: string; password: string };
 
@@ -22,7 +25,14 @@ export function RestablecerForm({ token }: { token: string }) {
   const { errors, isSubmitting } = form.formState;
 
   // Next deja la página oculta al navegar: que no quede la contraseña.
-  useLayoutEffect(() => () => form.reset(), [form]);
+  useLayoutEffect(
+    () => () => {
+      form.reset();
+      setListo(false);
+      setLinkInvalido(false);
+    },
+    [form],
+  );
 
   async function onSubmit(datos: Datos) {
     const resultado = await restablecerPassword(datos);
@@ -34,15 +44,17 @@ export function RestablecerForm({ token }: { token: string }) {
   if (listo) {
     return (
       <div className="flex flex-col gap-5">
-        <p role="status" className="border bg-secondary px-3 py-2.5 text-sm">
+        <AvisoListo Icono={CircleCheck}>
           Listo, ya podés ingresar con tu contraseña nueva.
-        </p>
+        </AvisoListo>
         <Button asChild size="lg">
           <Link href="/login">Ingresar</Link>
         </Button>
       </div>
     );
   }
+
+  if (linkInvalido) return <LinkVencido />;
 
   return (
     <form
@@ -56,19 +68,7 @@ export function RestablecerForm({ token }: { token: string }) {
         label="Contraseña nueva"
         autoComplete="new-password"
       />
-      {errors.root && (
-        <ErrorFormulario>
-          {errors.root.message}
-          {linkInvalido && (
-            <>
-              {" "}
-              <Link href="/recuperar" className="font-medium underline">
-                Pedí uno nuevo
-              </Link>
-            </>
-          )}
-        </ErrorFormulario>
-      )}
+      {errors.root && <ErrorFormulario>{errors.root.message}</ErrorFormulario>}
       <Button type="submit" size="lg" disabled={isSubmitting}>
         {isSubmitting ? "Guardando…" : "Guardar contraseña"}
       </Button>

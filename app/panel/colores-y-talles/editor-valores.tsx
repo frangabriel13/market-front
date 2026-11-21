@@ -33,7 +33,12 @@ type Props = {
 
 // Cada cambio guarda la lista entera. `anterior` lleva el nombre guardado:
 // así la API sabe qué se renombró y lo cambia en los productos.
-export function EditorValores({ nombre, placeholder, valores, onGuardar }: Props) {
+export function EditorValores({
+  nombre,
+  placeholder,
+  valores,
+  onGuardar,
+}: Props) {
   const { pendiente, error, ejecutar } = useAccion();
   const [editando, setEditando] = useState<string>();
   const [aQuitar, setAQuitar] = useState<ValorEnUso>();
@@ -88,10 +93,10 @@ export function EditorValores({ nombre, placeholder, valores, onGuardar }: Props
   return (
     <div className="flex flex-col gap-3">
       {valores.length > 0 && (
-        <ul className="flex flex-col divide-y border">
+        <ul className="-mx-4 flex flex-col divide-y border-b">
           {valores.map((valor, indice) =>
             editando === valor.nombre ? (
-              <li key={valor.nombre} className="p-2">
+              <li key={valor.nombre} className="px-4 py-2">
                 <EdicionEnLinea
                   etiqueta={`Nuevo nombre de ${valor.nombre}`}
                   inicial={valor.nombre}
@@ -114,9 +119,12 @@ export function EditorValores({ nombre, placeholder, valores, onGuardar }: Props
                 />
               </li>
             ) : (
-              <li key={valor.nombre} className="flex items-center gap-1 py-1 pl-3">
+              <li
+                key={valor.nombre}
+                className="flex items-center gap-1 py-1 pr-2 pl-4"
+              >
                 <div className="min-w-0 flex-1">
-                  <p className="truncate font-medium">{valor.nombre}</p>
+                  <p className="truncate font-semibold">{valor.nombre}</p>
                   {valor.productos > 0 && (
                     <p className="text-xs text-muted-foreground">
                       En {productos(valor.productos)}
@@ -216,7 +224,8 @@ export function EditorValores({ nombre, placeholder, valores, onGuardar }: Props
 }
 
 function avisoAlQuitar(cantidad: number) {
-  const usan = cantidad === 1 ? "Lo usa 1 producto" : `Lo usan ${cantidad} productos`;
+  const usan =
+    cantidad === 1 ? "Lo usa 1 producto" : `Lo usan ${cantidad} productos`;
   const donde = cantidad === 1 ? "ese producto" : "esos productos";
   return `${usan}. Deja de mostrarse en ${donde} y en la tienda. Si lo volvés a agregar con el mismo nombre, vuelve con la disponibilidad que tenía.`;
 }

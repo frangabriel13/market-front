@@ -38,10 +38,12 @@ async function EditarMarca({ params }: { params: Promise<{ id: string }> }) {
   return (
     <>
       <h1 className="titulo mb-6">{marca.nombre}</h1>
-      <ImagenesMarca marca={marca} />
-      <AccesoFabricanteSeccion marca={marca} />
-      <OpcionesEntrega marcaId={marca.id} opciones={opciones} />
-      <MarcaForm marca={marca} dominio={process.env.PLATFORM_DOMAIN ?? ""} />
+      <div className="flex flex-col gap-8 [&>*+*]:border-t [&>*+*]:pt-8">
+        <ImagenesMarca marca={marca} />
+        <AccesoFabricanteSeccion marca={marca} />
+        <OpcionesEntrega marcaId={marca.id} opciones={opciones} />
+        <MarcaForm marca={marca} dominio={process.env.PLATFORM_DOMAIN ?? ""} />
+      </div>
     </>
   );
 }
@@ -67,7 +69,7 @@ function EditarMarcaCargando() {
       {Array.from({ length: 3 }, (_, i) => (
         <div key={i} className="space-y-2">
           <Skeleton className="h-4 w-24" />
-          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-11 w-full" />
         </div>
       ))}
     </div>

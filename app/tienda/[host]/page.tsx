@@ -47,8 +47,7 @@ export default function InicioTiendaPage({ params }: PageProps<"/tienda/[host]">
   );
 }
 
-// La portada se muestra entera, con su proporción, sin textos encima: los
-// textos del banner dejaron de mostrarse (decidido el 13/11, en la 7.1).
+// La portada se muestra entera, con su proporción, sin textos encima.
 async function Portada({ params }: Params) {
   const marca = await obtenerMarca((await params).host);
   return (

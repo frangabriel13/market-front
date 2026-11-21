@@ -68,81 +68,87 @@ async function DetallePedido({ params }: { params: Promise<{ id: string }> }) {
           <CambiarEstado pedidoId={pedido.id} estado={pedido.estado} />
         </section>
 
-      <Seccion titulo="Comprador">
-        <Dato>{pedido.compradorNombre}</Dato>
-        <Dato>
-          <a
-            href={`tel:+${pedido.compradorTelefono}`}
-            className="underline underline-offset-4"
+        <Seccion titulo="Comprador">
+          <Dato>{pedido.compradorNombre}</Dato>
+          <Dato>
+            <a
+              href={`tel:+${pedido.compradorTelefono}`}
+              className="underline underline-offset-4"
+            >
+              {formatearTelefono(pedido.compradorTelefono)}
+            </a>
+          </Dato>
+          {pedido.compradorDni && (
+            <Dato etiqueta="DNI">{pedido.compradorDni}</Dato>
+          )}
+          {pedido.compradorCuit && (
+            <Dato etiqueta="CUIT">{pedido.compradorCuit}</Dato>
+          )}
+          <Button
+            asChild
+            variant="success"
+            className="mt-3 w-full sm:w-auto sm:self-start"
           >
-            {formatearTelefono(pedido.compradorTelefono)}
-          </a>
-        </Dato>
-        {pedido.compradorDni && (
-          <Dato etiqueta="DNI">{pedido.compradorDni}</Dato>
-        )}
-        {pedido.compradorCuit && (
-          <Dato etiqueta="CUIT">{pedido.compradorCuit}</Dato>
-        )}
-        <Button asChild variant="success" className="mt-2 self-start">
-          <a href={whatsapp} target="_blank" rel="noopener noreferrer">
-            <IconoWhatsapp />
-            Escribirle por WhatsApp
-          </a>
-        </Button>
-      </Seccion>
+            <a href={whatsapp} target="_blank" rel="noopener noreferrer">
+              <IconoWhatsapp />
+              Escribirle por WhatsApp
+            </a>
+          </Button>
+        </Seccion>
 
-      <Seccion titulo="Entrega y pago">
-        <Dato etiqueta="Pago">{ETIQUETAS_FORMA_PAGO[pedido.formaPago]}</Dato>
-        <Dato>{pedido.entrega}</Dato>
-        {envio.map((linea) => (
-          <Dato key={linea}>{linea}</Dato>
-        ))}
-        {pedido.codigoPostal && (
-          <Dato etiqueta="Código postal">{pedido.codigoPostal}</Dato>
-        )}
-        {pedido.transporte && (
-          <Dato etiqueta="Transporte">{pedido.transporte}</Dato>
-        )}
-        {pedido.observaciones && (
-          <Dato etiqueta="Observaciones">{pedido.observaciones}</Dato>
-        )}
-      </Seccion>
-
-      <Seccion titulo="Productos">
-        <ul className="divide-y border-y">
-          {pedido.items.map((item, i) => (
-            <li key={i} className="flex justify-between gap-3 py-3 text-sm">
-              <div className="min-w-0">
-                {item.productoId ? (
-                  <Link
-                    href={`/panel/productos/${item.productoId}`}
-                    className="font-semibold hover:underline"
-                  >
-                    {item.nombreProducto}
-                  </Link>
-                ) : (
-                  <p className="font-semibold">{item.nombreProducto}</p>
-                )}
-                <p className="text-muted-foreground">
-                  {[
-                    descripcionVariante(item),
-                    `${item.cantidad} × ${formatearPrecio(item.precioUnitario)}`,
-                  ]
-                    .filter(Boolean)
-                    .join(" · ")}
-                </p>
-              </div>
-              <p className="shrink-0 font-bold">
-                {formatearPrecio(item.cantidad * item.precioUnitario)}
-              </p>
-            </li>
+        <Seccion titulo="Entrega y pago">
+          <Dato etiqueta="Pago">{ETIQUETAS_FORMA_PAGO[pedido.formaPago]}</Dato>
+          <Dato>{pedido.entrega}</Dato>
+          {envio.map((linea) => (
+            <Dato key={linea}>{linea}</Dato>
           ))}
-        </ul>
-        <p className="flex justify-between pt-1 font-bold">
-          <span>Total</span>
-          <span className="text-lg">{formatearPrecio(pedido.total)}</span>
-        </p>
+          {pedido.codigoPostal && (
+            <Dato etiqueta="Código postal">{pedido.codigoPostal}</Dato>
+          )}
+          {pedido.transporte && (
+            <Dato etiqueta="Transporte">{pedido.transporte}</Dato>
+          )}
+          {pedido.observaciones && (
+            <Dato etiqueta="Observaciones">{pedido.observaciones}</Dato>
+          )}
+        </Seccion>
+
+        <Seccion titulo="Productos">
+          <ul className="divide-y border-y">
+            {pedido.items.map((item, i) => (
+              <li key={i} className="flex justify-between gap-3 py-3 text-sm">
+                <div className="min-w-0">
+                  {item.productoId ? (
+                    <Link
+                      href={`/panel/productos/${item.productoId}`}
+                      className="font-semibold hover:underline"
+                    >
+                      {item.nombreProducto}
+                    </Link>
+                  ) : (
+                    <p className="font-semibold">{item.nombreProducto}</p>
+                  )}
+                  <p className="text-muted-foreground">
+                    {[
+                      descripcionVariante(item),
+                      `${item.cantidad} × ${formatearPrecio(item.precioUnitario)}`,
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </p>
+                </div>
+                <p className="shrink-0 font-bold">
+                  {formatearPrecio(item.cantidad * item.precioUnitario)}
+                </p>
+              </li>
+            ))}
+          </ul>
+          <p className="flex items-baseline justify-between pt-2 font-bold">
+            <span>Total</span>
+            <span className="text-xl font-extrabold">
+              {formatearPrecio(pedido.total)}
+            </span>
+          </p>
         </Seccion>
       </div>
     </>
@@ -154,9 +160,7 @@ type ConHijos = { children: React.ReactNode };
 function Seccion({ titulo, children }: ConHijos & { titulo: string }) {
   return (
     <section className={`flex flex-col gap-1 ${TARJETA}`}>
-      <h2 className="mb-1 titulo-seccion">
-        {titulo}
-      </h2>
+      <h2 className="titulo-seccion mb-2">{titulo}</h2>
       {children}
     </section>
   );
@@ -177,8 +181,8 @@ function PedidoCargando() {
       <EncabezadoPagina titulo="Pedido" volver="/panel/pedidos" />
       <div className={CUERPO} aria-busy="true">
         <Skeleton className="h-4 w-28" />
-        <Skeleton className="h-24 w-full rounded-none bg-background" />
-        <Skeleton className="h-40 w-full rounded-none bg-background" />
+        <Skeleton className="h-24 w-full bg-background" />
+        <Skeleton className="h-40 w-full bg-background" />
       </div>
     </>
   );

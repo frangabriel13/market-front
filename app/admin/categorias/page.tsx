@@ -13,7 +13,7 @@ export default function CategoriasPage() {
   return (
     <>
       <h1 className="titulo">Categorías</h1>
-      <p className="mb-4 text-sm text-muted-foreground">
+      <p className="mt-1 mb-5 text-sm text-muted-foreground">
         Son las mismas para todas las tiendas. Cada producto va en una sola.
       </p>
       <Suspense fallback={<CategoriasCargando />}>
