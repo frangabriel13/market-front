@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Suspense } from "react";
-import { ErrorFormulario } from "@/components/form/error-formulario";
 import { PantallaAuth } from "@/components/pantalla-auth";
+import { LinkVencido } from "./link-vencido";
 import { RestablecerForm } from "./restablecer-form";
 
 export const metadata: Metadata = {
@@ -28,15 +27,6 @@ async function Contenido({
   searchParams,
 }: Pick<PageProps<"/restablecer">, "searchParams">) {
   const { token } = await searchParams;
-  if (typeof token !== "string" || !token) {
-    return (
-      <ErrorFormulario>
-        El link no es válido.{" "}
-        <Link href="/recuperar" className="font-medium underline">
-          Pedí uno nuevo
-        </Link>
-      </ErrorFormulario>
-    );
-  }
+  if (typeof token !== "string" || !token) return <LinkVencido />;
   return <RestablecerForm token={token} />;
 }

@@ -46,7 +46,7 @@ export function EliminarProducto({ productoId, nombre }: Props) {
       }}
     >
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" className="mt-10 self-start">
+        <Button variant="destructive" className="self-start">
           <Trash2 />
           Eliminar producto
         </Button>

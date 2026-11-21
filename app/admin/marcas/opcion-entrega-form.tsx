@@ -38,7 +38,9 @@ export function OpcionEntregaForm({
     if (!error) return form.reset();
     form.setError("root", { message: error.error });
     for (const [campo, mensaje] of Object.entries(error.campos ?? {})) {
-      form.setError(campo as Path<OpcionEntregaCrearInput>, { message: mensaje });
+      form.setError(campo as Path<OpcionEntregaCrearInput>, {
+        message: mensaje,
+      });
     }
   }
 

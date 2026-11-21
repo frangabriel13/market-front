@@ -46,7 +46,7 @@ export function NuevaLista({ existentes }: { existentes: string[] }) {
     <form
       noValidate
       onSubmit={form.handleSubmit(onSubmit)}
-      className="flex flex-col gap-3 border border-dashed bg-background p-4"
+      className="flex flex-col gap-3 border border-dashed border-input bg-background p-4"
     >
       <CampoTexto
         control={control}

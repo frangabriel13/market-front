@@ -2,6 +2,7 @@
 
 import "@/lib/zod-es";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { CircleCheck } from "lucide-react";
 import { unstable_rethrow } from "next/navigation";
 import { useLayoutEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -57,12 +58,23 @@ export function TextoLegalForm({ texto }: { texto: TextoLegal }) {
       onSubmit={(evento) => form.handleSubmit(guardar)(evento)}
       className="flex flex-col gap-3"
     >
-      <div>
-        <h2 className="titulo-seccion">{titulo}</h2>
+      <div className="flex flex-col gap-1.5">
+        <div className="flex items-center gap-2">
+          <h2 className="titulo-seccion">{titulo}</h2>
+          {publicado ? (
+            <span className="inline-flex h-5 items-center border border-success px-1.5 text-[11px] font-bold tracking-wider text-success uppercase">
+              Publicado
+            </span>
+          ) : (
+            <span className="inline-flex h-5 items-center border border-border px-1.5 text-[11px] font-bold tracking-wider text-muted-foreground uppercase">
+              Sin publicar
+            </span>
+          )}
+        </div>
         <p className="text-sm text-muted-foreground">
           {publicado && texto.actualizadoEn
-            ? `Publicado. Última actualización: ${formatearFecha(texto.actualizadoEn)}.`
-            : "Sin publicar: no aparece en las tiendas."}
+            ? `Última actualización: ${formatearFecha(texto.actualizadoEn)}.`
+            : "No aparece en las tiendas hasta que lo guardes con texto."}
         </p>
       </div>
       <CampoTexto
@@ -78,7 +90,11 @@ export function TextoLegalForm({ texto }: { texto: TextoLegal }) {
           {form.formState.isSubmitting ? "Guardando…" : "Guardar"}
         </Button>
         {guardado && !form.formState.isDirty && (
-          <p role="status" className="text-sm text-success">
+          <p
+            role="status"
+            className="flex items-center gap-1.5 text-sm font-semibold text-success"
+          >
+            <CircleCheck className="size-4" />
             Guardamos los cambios.
           </p>
         )}

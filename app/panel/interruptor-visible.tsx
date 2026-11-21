@@ -22,13 +22,19 @@ export function InterruptorVisible({ productoId, nombre, visible }: Props) {
   }
 
   return (
-    <div className="flex w-14 shrink-0 flex-col items-center gap-2">
+    <div className="flex w-16 shrink-0 flex-col items-center gap-1.5">
       <Switch
         checked={visibleOptimista}
         onCheckedChange={cambiar}
         aria-label={`Publicar ${nombre}`}
         className="data-checked:bg-success"
       />
+      <span
+        aria-hidden="true"
+        className="text-[11px] font-semibold whitespace-nowrap text-muted-foreground"
+      >
+        {visibleOptimista ? "Publicado" : "Oculto"}
+      </span>
       {error && (
         <p role="alert" className="text-center text-[11px] text-destructive">
           {error}

@@ -36,7 +36,6 @@ export interface MarcaTienda extends Pick<
   | 'slug'
   | 'logoUrl'
   | 'portadaUrl'
-  | 'textosBanner'
   | 'whatsapp'
   | 'direccionRetiro'
   | 'horariosRetiro'

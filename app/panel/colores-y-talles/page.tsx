@@ -33,7 +33,7 @@ async function Listas() {
         titulo="Colores"
         descripcion="Una sola lista para todos tus productos. Se muestran en este orden en la tienda. Si le cambiás el nombre a uno, cambia en todos los productos que lo usan."
       >
-        <div className="border bg-background p-4">
+        <div className="border bg-background px-4 pb-4">
           <EditorValores
             nombre="color"
             placeholder="Ej. Negro"
@@ -70,7 +70,7 @@ type SeccionProps = {
 function Seccion({ titulo, descripcion, children }: SeccionProps) {
   return (
     <section className="flex flex-col gap-3">
-      <div>
+      <div className="flex flex-col gap-1">
         <h2 className="titulo-seccion">{titulo}</h2>
         <p className="text-sm text-muted-foreground">{descripcion}</p>
       </div>
@@ -83,9 +83,9 @@ function Cargando() {
   return (
     <div className="flex flex-col gap-4" aria-busy="true">
       <Skeleton className="h-4 w-24" />
-      <Skeleton className="h-40 w-full" />
+      <Skeleton className="h-40 w-full bg-background" />
       <Skeleton className="h-4 w-32" />
-      <Skeleton className="h-64 w-full" />
+      <Skeleton className="h-64 w-full bg-background" />
     </div>
   );
 }

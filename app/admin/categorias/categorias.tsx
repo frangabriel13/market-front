@@ -78,7 +78,7 @@ export function Categorias({
         </p>
       )}
 
-      <div className="border p-4">
+      <div className="border border-dashed border-input p-4">
         <NombreForm
           label="Nueva categoría"
           textoBoton="Agregar"

@@ -1,10 +1,11 @@
 "use client";
 
 import "@/lib/zod-es";
+import { CircleCheck } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { unstable_rethrow } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Controller, useForm, useWatch, type Path } from "react-hook-form";
+import { useForm, useWatch, type Path } from "react-hook-form";
 import { CampoPesos } from "@/components/form/campo-pesos";
 import { CampoTexto } from "@/components/form/campo-texto";
 import { Button } from "@/components/ui/button";
@@ -24,13 +25,20 @@ import { formatearTelefono } from "@/lib/schemas/telefono";
 import { slugify } from "@/lib/slugify";
 import { crearMarca, editarMarca } from "./acciones";
 import type { ErrorAccion } from "@/lib/acciones/errores";
-import { TextosBanner } from "./textos-banner";
 
 type Props = { marca?: Marca; dominio: string };
 
 const REDES = [
-  { nombre: "instagram", label: "Instagram", placeholder: "https://instagram.com/…" },
-  { nombre: "facebook", label: "Facebook", placeholder: "https://facebook.com/…" },
+  {
+    nombre: "instagram",
+    label: "Instagram",
+    placeholder: "https://instagram.com/…",
+  },
+  {
+    nombre: "facebook",
+    label: "Facebook",
+    placeholder: "https://facebook.com/…",
+  },
   { nombre: "tiktok", label: "TikTok", placeholder: "https://tiktok.com/@…" },
 ] as const;
 
@@ -44,7 +52,6 @@ function valoresIniciales(marca?: Marca): MarcaCrearInput {
     condicionesVenta: marca?.condicionesVenta ?? "",
     direccionRetiro: marca?.direccionRetiro ?? "",
     horariosRetiro: marca?.horariosRetiro ?? "",
-    textosBanner: marca?.textosBanner ?? [],
     redes: {
       instagram: marca?.redes.instagram ?? "",
       facebook: marca?.redes.facebook ?? "",
@@ -148,7 +155,8 @@ export function MarcaForm({ marca, dominio }: Props) {
                 <span className="font-medium text-foreground">
                   {slug || "tu-marca"}.{dominio}
                 </span>
-                {marca && ". Si la cambiás, el link anterior deja de funcionar."}
+                {marca &&
+                  ". Si la cambiás, el link anterior deja de funcionar."}
               </>
             }
           />
@@ -212,22 +220,6 @@ export function MarcaForm({ marca, dominio }: Props) {
       </FieldSet>
 
       <FieldSet>
-        <FieldLegend>Banner del inicio</FieldLegend>
-        <FieldDescription>Hasta 3 textos cortos para el inicio de la tienda.</FieldDescription>
-        <Controller
-          control={control}
-          name="textosBanner"
-          render={({ field }) => (
-            <TextosBanner
-              value={field.value ?? []}
-              onChange={field.onChange}
-              errores={formState.errors.textosBanner}
-            />
-          )}
-        />
-      </FieldSet>
-
-      <FieldSet>
         <FieldLegend>Redes</FieldLegend>
         <FieldGroup>
           {REDES.map(({ nombre, label, placeholder }) => (
@@ -244,14 +236,18 @@ export function MarcaForm({ marca, dominio }: Props) {
         </FieldGroup>
       </FieldSet>
 
-      <div className="sticky bottom-0 -mx-4 flex flex-col gap-2 border-t bg-background px-4 py-3">
+      <div className="sticky bottom-0 z-10 -mx-4 flex flex-col gap-2 border-t bg-background px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
         {formState.errors.root && (
           <p role="alert" className="text-sm text-destructive">
             {formState.errors.root.message}
           </p>
         )}
         {guardado && !formState.isDirty && (
-          <p role="status" className="text-sm text-success">
+          <p
+            role="status"
+            className="flex items-center gap-1.5 text-sm font-semibold text-success"
+          >
+            <CircleCheck className="size-4" />
             Guardamos los cambios.
           </p>
         )}

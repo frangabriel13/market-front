@@ -43,9 +43,9 @@ async function Pedidos() {
 function ListaPedidosCargando() {
   return (
     <div className="flex flex-col gap-3" aria-busy="true">
-      <Skeleton className="h-12 w-56 rounded-none" />
+      <Skeleton className="h-10 w-56" />
       {Array.from({ length: 3 }, (_, i) => (
-        <Skeleton key={i} className="h-36 w-full rounded-none bg-background" />
+        <Skeleton key={i} className="h-28 w-full bg-background" />
       ))}
     </div>
   );

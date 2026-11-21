@@ -28,8 +28,10 @@ export function ElegirFotos({ disabled, progreso, onArchivos }: Props) {
 
   if (progreso) {
     return (
-      <li className="col-span-2 aspect-[2/1]">
-        <p className={cn(RECUADRO, "border border-dashed text-muted-foreground")}>
+      <li className="col-span-2 min-h-36">
+        <p
+          className={cn(RECUADRO, "border border-dashed text-muted-foreground")}
+        >
           <Loader2 className="size-5 animate-spin" />
           {progreso}
         </p>
@@ -39,7 +41,7 @@ export function ElegirFotos({ disabled, progreso, onArchivos }: Props) {
 
   return (
     <>
-      <li className="aspect-square">
+      <li className="aspect-[3/4]">
         <button
           type="button"
           disabled={disabled}
@@ -59,7 +61,7 @@ export function ElegirFotos({ disabled, progreso, onArchivos }: Props) {
           onChange={alElegir}
         />
       </li>
-      <li className="aspect-square">
+      <li className="aspect-[3/4]">
         <button
           type="button"
           disabled={disabled}

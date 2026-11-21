@@ -37,11 +37,7 @@ export function CampoCategoria({ control, categorias }: Props) {
       render={({ field, fieldState }) => (
         <Field data-invalid={fieldState.invalid}>
           <FieldLabel htmlFor={id}>Categoría</FieldLabel>
-          <SelectNativo
-            {...field}
-            id={id}
-            aria-invalid={fieldState.invalid}
-            >
+          <SelectNativo {...field} id={id} aria-invalid={fieldState.invalid}>
             <option value="" disabled>
               Elegí una categoría
             </option>

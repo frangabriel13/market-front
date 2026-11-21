@@ -53,20 +53,32 @@ async function EditarProducto({ params, searchParams }: Props) {
       />
       <Cuerpo>
         {incompleto && (
-          <p role="alert" className="mb-4 bg-muted p-3 text-sm">
+          <p
+            role="alert"
+            className="mb-5 border-l-2 border-destructive bg-destructive/5 px-3 py-3 text-sm text-destructive"
+          >
             Creamos el producto, pero algunas fotos o la disponibilidad no se
             guardaron. Revisalas acá y probá de nuevo.
           </p>
         )}
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-6">
           <FotosProducto productoId={producto.id} fotos={producto.fotos} />
-          <ProductoForm
-            producto={producto}
-            categorias={categorias}
-            listas={listas}
-          />
+          <div className="border-t pt-6">
+            <ProductoForm
+              producto={producto}
+              categorias={categorias}
+              listas={listas}
+            />
+          </div>
         </div>
-        <EliminarProducto productoId={producto.id} nombre={producto.nombre} />
+        <section className="mt-8 flex flex-col gap-3 border-t pt-6">
+          <h2 className="titulo-seccion">Eliminar</h2>
+          <p className="text-sm text-muted-foreground">
+            Si solo querés que no se vea en la tienda, ocultalo con el
+            interruptor de arriba.
+          </p>
+          <EliminarProducto productoId={producto.id} nombre={producto.nombre} />
+        </section>
       </Cuerpo>
     </>
   );

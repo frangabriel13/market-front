@@ -2,6 +2,7 @@
 
 import { X } from "lucide-react";
 import { useEffect, useMemo } from "react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MAXIMO_FOTOS } from "@/lib/schemas/productos";
 import { ElegirFotos } from "./elegir-fotos";
@@ -25,7 +26,7 @@ export function FotosNuevas({ archivos, onCambiar, disabled }: Props) {
   return (
     <section className="flex flex-col gap-2">
       <div className="flex items-baseline justify-between">
-        <h2 className="text-sm font-semibold">Fotos</h2>
+        <h2 className="titulo-seccion">Fotos</h2>
         <p className="text-sm text-muted-foreground">
           {archivos.length} de {MAXIMO_FOTOS}
         </p>
@@ -42,7 +43,7 @@ export function FotosNuevas({ archivos, onCambiar, disabled }: Props) {
         {vistas.map((url, i) => (
           <li
             key={url}
-            className="relative aspect-square overflow-hidden bg-muted"
+            className="relative aspect-[3/4] overflow-hidden bg-muted"
           >
             {/* eslint-disable-next-line @next/next/no-img-element -- vista previa local (blob:) */}
             <img
@@ -51,9 +52,7 @@ export function FotosNuevas({ archivos, onCambiar, disabled }: Props) {
               className="size-full object-cover"
             />
             {i === 0 && (
-              <span className="absolute top-1 left-1 bg-foreground px-1.5 py-0.5 text-[10px] font-semibold text-background uppercase">
-                Principal
-              </span>
+              <Badge className="absolute top-1.5 left-1.5">Principal</Badge>
             )}
             <Button
               type="button"

@@ -3,6 +3,7 @@
 import "@/lib/zod-es";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { unstable_rethrow, useRouter } from "next/navigation";
+import { CircleCheck, Info } from "lucide-react";
 import { useLayoutEffect, useRef, useState } from "react";
 import {
   useForm,
@@ -148,8 +149,9 @@ export function ProductoForm({ producto, categorias, listas }: Props) {
   const esNuevo = !producto;
   // Solo la de uno nuevo: la de uno guardado cambia al guardar y no tiene que
   // disparar el reinicio.
-  const { conColores: conColoresInicial, listaTallesId: listaInicial } =
-    esNuevo ? inicial : { conColores: true, listaTallesId: null };
+  const { conColores: conColoresInicial, listaTallesId: listaInicial } = esNuevo
+    ? inicial
+    : { conColores: true, listaTallesId: null };
   useLayoutEffect(
     () => () => {
       if (!reiniciarAlOcultar.current) return;
@@ -167,7 +169,6 @@ export function ProductoForm({ producto, categorias, listas }: Props) {
     },
     [form, esNuevo, conColoresInicial, listaInicial],
   );
-
 
   // Lo de otra lista o modalidad no sirve; al volver a la guardada, vuelve lo
   // que tenía.
@@ -234,7 +235,9 @@ export function ProductoForm({ producto, categorias, listas }: Props) {
       await (producto ? editar(producto.id, datos) : crear(datos));
     } catch (error) {
       unstable_rethrow(error);
-      mostrarError({ error: "No pudimos guardar el producto. Probá de nuevo." });
+      mostrarError({
+        error: "No pudimos guardar el producto. Probá de nuevo.",
+      });
     } finally {
       setPaso(undefined);
     }
@@ -253,97 +256,115 @@ export function ProductoForm({ producto, categorias, listas }: Props) {
     <form
       noValidate
       onSubmit={(evento) => form.handleSubmit(onSubmit)(evento)}
-      className="flex flex-col gap-5"
+      className="flex flex-col gap-6 [&>section+section]:border-t [&>section+section]:pt-6"
     >
       {esNuevo && (
         <FotosNuevas archivos={fotos} onCambiar={setFotos} disabled={ocupado} />
       )}
-      <CampoTexto
-        control={control}
-        name="nombre"
-        label="Nombre del producto"
-        maxLength={120}
-      />
-      <div className="grid grid-cols-2 gap-3">
-        <CampoPesos control={control} name="precio" label="Precio" />
-        <CampoCategoria control={control} categorias={categorias} />
-      </div>
-      <CampoOpciones
-        control={control}
-        name="conColores"
-        titulo="¿Tiene colores?"
-        className="grid grid-cols-2"
-        opciones={[
-          {
-            valor: true,
-            titulo: "Con colores",
-            detalle:
-              resumen(
-                listas.colores.map((c) => c.nombre),
-                { rango: false },
-              ) || "Todavía no cargaste colores",
-          },
-          {
-            valor: false,
-            titulo: "Sin colores",
-            detalle: "Un solo color o no aplica",
-          },
-        ]}
-        onElegir={(valor) => cambiarModalidad({ conColores: valor })}
-      />
-      <CampoOpciones
-        control={control}
-        name="listaTallesId"
-        titulo="¿Qué talles usa?"
-        opciones={[
-          ...listas.listasTalles.map((lista) => ({
-            valor: lista.id,
-            titulo: lista.nombre,
-            detalle:
-              resumen(
-                lista.talles.map((t) => t.nombre),
-                { rango: true },
-              ) || "Todavía no tiene talles",
-          })),
-          {
-            valor: null,
-            titulo: "Sin talles",
-            detalle: "Talle único o no aplica",
-          },
-        ]}
-        onElegir={(valor) => cambiarModalidad({ listaTallesId: valor })}
-      />
-      {modalidadCambiada && (
-        <p role="status" className="border-l-4 border-foreground bg-muted p-3 text-sm">
-          Cambiaste los colores o los talles del producto: marcá de nuevo qué
-          hay disponible. Lo que tenía queda guardado y vuelve si lo dejás como
-          estaba.
-        </p>
-      )}
-      <EditorDisponibilidad
-        valores={valores}
-        matriz={matriz}
-        onCambiar={(nueva) => {
-          setGuardado(false);
-          setMatriz(nueva);
-        }}
-      />
-      <CampoTexto
-        control={control}
-        name="descripcion"
-        label="Descripción (opcional)"
-        placeholder="Material, corte, estampado"
-        multilinea
-        maxLength={2000}
-      />
+      <section className="flex flex-col gap-5">
+        <CampoTexto
+          control={control}
+          name="nombre"
+          label="Nombre del producto"
+          maxLength={120}
+        />
+        <div className="grid grid-cols-2 gap-3">
+          <CampoPesos control={control} name="precio" label="Precio" />
+          <CampoCategoria control={control} categorias={categorias} />
+        </div>
+      </section>
+      <section className="flex flex-col gap-5">
+        <CampoOpciones
+          control={control}
+          name="conColores"
+          titulo="¿Tiene colores?"
+          className="grid grid-cols-2"
+          opciones={[
+            {
+              valor: true,
+              titulo: "Con colores",
+              detalle:
+                resumen(
+                  listas.colores.map((c) => c.nombre),
+                  { rango: false },
+                ) || "Todavía no cargaste colores",
+            },
+            {
+              valor: false,
+              titulo: "Sin colores",
+              detalle: "Un solo color o no aplica",
+            },
+          ]}
+          onElegir={(valor) => cambiarModalidad({ conColores: valor })}
+        />
+        <CampoOpciones
+          control={control}
+          name="listaTallesId"
+          titulo="¿Qué talles usa?"
+          opciones={[
+            ...listas.listasTalles.map((lista) => ({
+              valor: lista.id,
+              titulo: lista.nombre,
+              detalle:
+                resumen(
+                  lista.talles.map((t) => t.nombre),
+                  { rango: true },
+                ) || "Todavía no tiene talles",
+            })),
+            {
+              valor: null,
+              titulo: "Sin talles",
+              detalle: "Talle único o no aplica",
+            },
+          ]}
+          onElegir={(valor) => cambiarModalidad({ listaTallesId: valor })}
+        />
+        {modalidadCambiada && (
+          <p
+            role="status"
+            className="flex gap-2.5 border-l-2 border-foreground bg-muted px-3 py-3 text-sm"
+          >
+            <Info className="mt-0.5 size-4 shrink-0" />
+            <span>
+              Cambiaste los colores o los talles del producto: marcá de nuevo
+              qué hay disponible. Lo que tenía queda guardado y vuelve si lo
+              dejás como estaba.
+            </span>
+          </p>
+        )}
+      </section>
+      <section className="flex flex-col gap-5">
+        <EditorDisponibilidad
+          valores={valores}
+          matriz={matriz}
+          onCambiar={(nueva) => {
+            setGuardado(false);
+            setMatriz(nueva);
+          }}
+        />
+      </section>
+      <section>
+        <CampoTexto
+          control={control}
+          name="descripcion"
+          label="Descripción (opcional)"
+          placeholder="Material, corte, estampado"
+          multilinea
+          maxLength={2000}
+        />
+      </section>
 
       {formState.errors.root && (
         <ErrorFormulario>{formState.errors.root.message}</ErrorFormulario>
       )}
 
-      <div className="sticky bottom-0 -mx-4 flex flex-col items-center gap-2 border-t bg-background px-4 py-3">
+      <div className="sticky bottom-0 z-10 -mx-4 flex flex-col items-center gap-2 border-t bg-background px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
         {guardado && sinCambios && (
-          <p role="status" className="text-sm text-success">
+          <p
+            role="status"
+            className="flex items-center gap-1.5 text-sm font-semibold text-success"
+          >
+            <CircleCheck className="size-4" />
             Guardamos los cambios.
           </p>
         )}
@@ -373,7 +394,7 @@ export function ProductoForm({ producto, categorias, listas }: Props) {
               type="submit"
               disabled={ocupado}
               onClick={() => enviar(false)}
-              className="py-1 text-sm font-semibold underline underline-offset-4 disabled:opacity-50"
+              className="py-1.5 text-sm font-semibold underline underline-offset-4 hover:no-underline disabled:opacity-50"
             >
               {ocupado && !publicando
                 ? (paso ?? "Guardando…")

@@ -2,10 +2,7 @@
 
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import {
-  descripcionVariante,
-  MAXIMO_TALLES_EN_GRILLA,
-} from "@/lib/variantes";
+import { descripcionVariante, MAXIMO_TALLES_EN_GRILLA } from "@/lib/variantes";
 import { RUTA_LISTAS } from "../aviso-listas";
 import {
   alternar,
@@ -52,8 +49,7 @@ export function EditorDisponibilidad({ valores, matriz, onCambiar }: Props) {
     });
   };
 
-  const enBloques =
-    conTalles && matriz.talles.length > MAXIMO_TALLES_EN_GRILLA;
+  const enBloques = conTalles && matriz.talles.length > MAXIMO_TALLES_EN_GRILLA;
 
   // `conTalle`: en los bloques no hay encabezado de talles, cada casillero
   // muestra el suyo.
@@ -108,7 +104,7 @@ export function EditorDisponibilidad({ valores, matriz, onCambiar }: Props) {
       )}
       {matriz.colores.length > 0 && matriz.talles.length > 0 && (
         <div className="flex flex-col gap-1">
-          <p className="text-sm font-semibold">¿Qué hay disponible?</p>
+          <p className="titulo-seccion">¿Qué hay disponible?</p>
           <p className="text-sm text-muted-foreground">
             {conColores || conTalles
               ? "Tocá un casillero para marcarlo como agotado o disponible."
